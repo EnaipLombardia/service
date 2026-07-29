@@ -1,6 +1,6 @@
 ---
 export interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
@@ -28,25 +28,64 @@ const { title } = Astro.props;
         transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       }
       
-      /* Dark Mode */
+      /* === DARK MODE - CORREZIONI CONTRASTO === */
       .dark {
         background-color: #0f172a;
         color: #f1f5f9;
       }
+      
+      /* Sfondo contenitori */
       .dark .bg-white { background-color: #1e293b; }
-      .dark .bg-gray-100 { background-color: #334155; }
       .dark .bg-gray-50 { background-color: #1e293b; }
+      .dark .bg-gray-100 { background-color: #334155; }
       .dark .bg-gray-200 { background-color: #334155; }
       .dark .bg-gray-300 { background-color: #475569; }
-      .dark .bg-gray-400 { background-color: #64748b; }
+      
+      /* Bordi */
       .dark .border-gray-200 { border-color: #334155; }
       .dark .border-gray-300 { border-color: #475569; }
+      .dark .border-gray-100 { border-color: #1e293b; }
+      .dark .divide-y > * + * { border-color: #334155; }
+      .dark .border-b { border-color: #334155; }
+      .dark .border-t { border-color: #334155; }
+      
+      /* Testi - CORRETTI PER LEGGIBILITÀ */
+      .dark .text-gray-900 { color: #f1f5f9; }
+      .dark .text-gray-800 { color: #e2e8f0; }
+      .dark .text-gray-700 { color: #cbd5e1; }
       .dark .text-gray-600 { color: #94a3b8; }
       .dark .text-gray-500 { color: #94a3b8; }
-      .dark .text-gray-700 { color: #e2e8f0; }
       .dark .text-gray-400 { color: #64748b; }
+      
+      /* Input, Select, Textarea in Dark Mode */
+      .dark input,
+      .dark select,
+      .dark textarea {
+        background-color: #1e293b;
+        color: #f1f5f9;
+        border-color: #475569;
+      }
+      .dark input:focus,
+      .dark select:focus,
+      .dark textarea:focus {
+        border-color: #3b82f6;
+        outline: none;
+        ring: 2px solid #3b82f6;
+      }
+      .dark input::placeholder,
+      .dark textarea::placeholder {
+        color: #94a3b8;
+      }
+      .dark label {
+        color: #e2e8f0;
+      }
+      
+      /* Ombre in Dark Mode */
       .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5); }
       .dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
+      .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5); }
+      
+      /* Colori delle card statistiche in Dark Mode */
       .dark .bg-blue-100 { background-color: #1e3a5f; color: #93c5fd; }
       .dark .bg-green-100 { background-color: #14532d; color: #86efac; }
       .dark .bg-yellow-100 { background-color: #78350f; color: #fcd34d; }
@@ -55,18 +94,12 @@ const { title } = Astro.props;
       .dark .bg-purple-100 { background-color: #4c1d95; color: #c4b5fd; }
       .dark .bg-indigo-100 { background-color: #3730a3; color: #a5b4fc; }
       .dark .bg-teal-100 { background-color: #134e4a; color: #5eead4; }
-      .dark .bg-gray-800 { background-color: #1e293b; }
-      .dark .bg-gray-900 { background-color: #0f172a; }
-      .dark .bg-yellow-50 { background-color: #78350f; color: #fcd34d; }
-      .dark .bg-green-50 { background-color: #14532d; color: #86efac; }
-      .dark .bg-red-50 { background-color: #7f1d1d; color: #fca5a5; }
-      .dark .bg-purple-50 { background-color: #4c1d95; color: #c4b5fd; }
+      .dark .bg-pink-100 { background-color: #831843; color: #f9a8d4; }
+      
+      /* Hover in Dark Mode */
       .dark .hover\:bg-gray-50:hover { background-color: #334155; }
       .dark .hover\:bg-gray-100:hover { background-color: #334155; }
       .dark .hover\:bg-gray-200:hover { background-color: #475569; }
-      .dark .divide-y > * + * { border-color: #334155; }
-      .dark .border-b { border-color: #334155; }
-      .dark .border-t { border-color: #334155; }
       
       /* Animazioni */
       @keyframes bounceIn {
@@ -140,10 +173,10 @@ const { title } = Astro.props;
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
             .then(registration => {
-              console.log('Service Worker registrato con successo');
+              console.log('✅ Service Worker registrato con successo');
             })
             .catch(err => {
-              console.log('Service Worker registrazione fallita: ', err);
+              console.log('❌ Service Worker registrazione fallita: ', err);
             });
         });
       }
@@ -152,36 +185,39 @@ const { title } = Astro.props;
   
   <body>
     <main>
-      <!-- Header con Logo e Dark Mode Toggle -->
+      <!-- Header con Logo, Dashboard Button e Dark Mode Toggle -->
       <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-40 no-print">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+          <!-- Logo e pulsante Dashboard -->
           <div class="flex items-center gap-3">
+            <a 
+              href="/" 
+              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+              title="Torna alla Dashboard"
+            >
+              <span>←</span> Dashboard
+            </a>
             <img 
               src="/images/enaip-logo.png" 
               alt="ENAIP Lombardia" 
-              class="h-10 w-auto"
-              onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-xl font-bold text-blue-700 dark:text-blue-400\'>ENAIP</span>';"
+              class="h-8 w-auto"
+              onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-lg font-bold text-blue-700 dark:text-blue-400\'>ENAIP</span>';"
             />
           </div>
-          <div class="flex items-center gap-3">
-            <button 
-              id="themeToggle"
-              class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              aria-label="Toggle theme"
-              title="Cambia tema (Dark/Light)"
-            >
-              <span id="themeIcon">🌙</span>
-            </button>
-          </div>
+          
+          <!-- Pulsante Tema -->
+          <button 
+            id="themeToggle"
+            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            aria-label="Cambia tema (Dark/Light)"
+            title="Cambia tema"
+          >
+            <span id="themeIcon">🌙</span>
+          </button>
         </div>
       </div>
       
       <!-- Contenuto della pagina -->
-<div class="max-w-6xl mx-auto px-4 py-2">
-  <a href="/" class="text-blue-500 hover:underline text-sm font-medium">
-    ← Torna alla Dashboard
-  </a>
-</div>
       <slot />
     </main>
 
