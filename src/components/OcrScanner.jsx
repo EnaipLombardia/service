@@ -5,7 +5,7 @@ export default function OcrScanner({ onDetected, onError, onCancel }) {
   const [recognizedText, setRecognizedText] = useState('');
   const [error, setError] = useState(null);
   const videoRef = useRef(null);
-  const streamRef = useRef(null);
+  const streamRef = useRef(null); 
 
   const startScanner = async () => {
     try {
