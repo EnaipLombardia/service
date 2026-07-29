@@ -1,0 +1,41 @@
+---
+import Layout from '../components/Layout.astro';
+import Background from '../components/Background.astro';
+---
+
+<Layout title="Astro Quickstart">
+	<main>
+   <Background />
+    <div id="content">
+      <div class="header">
+        <h1>Quickstart Template</h1>
+        <div class="logo">
+          <img src="https://user-images.githubusercontent.com/43764894/223559085-8ff69d2f-4247-427f-a3a6-d2036b00082a.png" alt="Netlify plus Astro banner">
+        </div>
+        <h2>
+          This is a bare-bones Astro project that has everything you need to quickly deploy it to Netlify
+        </h2>
+        <div class="btns">
+          <a href="https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/astro-quickstart" class="btn primary">Deploy to Netlify</a>
+          <a href="https://github.com/netlify-templates/astro-quickstart" class="btn secondary">View Repo</a>
+        </div>
+      </div>
+			<div class="resource-list">
+        <ul>
+          <li>
+            <a href="https://ntl.fyi/38O9wmY">Netlify Blog: Astro posts</a>
+					</li>
+          <li>
+            <a href="https://developers.netlify.com/guides/tag/astro/">Netlify DevHub: Astro Guides</a>
+					</li>
+          <li>
+            <a href="https://ntl.fyi/3KHGtyz">Netlify Docs</a>
+          </li>
+          <li>
+            <a href="https://docs.astro.build/en/getting-started/">Astro Docs</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+	</main>
+</Layout>
