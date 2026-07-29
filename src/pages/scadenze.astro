@@ -1,0 +1,143 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+
+// Calcola le date
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const todayStr = today.toISOString().split('T')[0];
+
+const future = new Date(today);
+future.setDate(future.getDate() + 30);
+const futureStr = future.toISOString().split('T')[0];
+
+// Asset in scadenza (prossimi 30 giorni)
+const { data: expiring } = await supabase
+  .from('asset')
+  .select('*')
+  .gte('scadenza_garanzia', todayStr)
+  .lte('scadenza_garanzia', futureStr)
+  .order('scadenza_garanzia', { ascending: true });
+
+// Asset già scaduti
+const { data: expired } = await supabase
+  .from('asset')
+  .select('*')
+  .lt('scadenza_garanzia', todayStr)
+  .order('scadenza_garanzia', { ascending: true });
+
+// Asset senza data di scadenza
+const { data: noWarranty } = await supabase
+  .from('asset')
+  .select('*')
+  .is('scadenza_garanzia', null)
+  .limit(5);
+---
+
+<Layout title="Scadenze Garanzie">
+  <div class="p-4 max-w-6xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">🔔 Scadenze Garanzie</h1>
+    <p class="text-gray-600 dark:text-gray-400 mb-4">Monitoraggio delle garanzie in scadenza e scadute</p>
+
+    <!-- In scadenza -->
+    <div class="mb-6">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg font-semibold text-yellow-600 dark:text-yellow-400">
+          ⚠️ In scadenza (prossimi 30 giorni)
+        </h2>
+        <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded text-sm">
+          {expiring?.length || 0} asset
+        </span>
+      </div>
+      {expiring && expiring.length > 0 ? (
+        <ul class="bg-white dark:bg-gray-800 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+          {expiring.map(asset => (
+            <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div>
+                <span class="font-medium">{asset.marca} {asset.modello}</span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm text-yellow-600 dark:text-yellow-400 font-medium">
+                  Scade il {new Date(asset.scadenza_garanzia).toLocaleDateString('it-IT')}
+                </span>
+                <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline text-sm">Dettaglio</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-gray-500 dark:text-gray-400">✅ Nessuna garanzia in scadenza.</p>
+      )}
+    </div>
+
+    <!-- Già scadute -->
+    <div class="mb-6">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg font-semibold text-red-600 dark:text-red-400">
+          ❌ Già scadute
+        </h2>
+        <span class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 px-2 py-1 rounded text-sm">
+          {expired?.length || 0} asset
+        </span>
+      </div>
+      {expired && expired.length > 0 ? (
+        <ul class="bg-white dark:bg-gray-800 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+          {expired.map(asset => (
+            <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div>
+                <span class="font-medium">{asset.marca} {asset.modello}</span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm text-red-600 dark:text-red-400 font-medium">
+                  Scaduta il {new Date(asset.scadenza_garanzia).toLocaleDateString('it-IT')}
+                </span>
+                <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline text-sm">Dettaglio</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-gray-500 dark:text-gray-400">✅ Nessuna garanzia scaduta.</p>
+      )}
+    </div>
+
+    <!-- Senza data di scadenza -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg font-semibold text-gray-500 dark:text-gray-400">
+          📋 Senza data di scadenza
+        </h2>
+        <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded text-sm">
+          {noWarranty?.length || 0} asset
+        </span>
+      </div>
+      {noWarranty && noWarranty.length > 0 ? (
+        <ul class="bg-white dark:bg-gray-800 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+          {noWarranty.map(asset => (
+            <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div>
+                <span class="font-medium">{asset.marca} {asset.modello}</span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm text-gray-500 dark:text-gray-400">Nessuna data inserita</span>
+                <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline text-sm">Dettaglio</a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-gray-500 dark:text-gray-400">✅ Tutti gli asset hanno una data di scadenza.</p>
+      )}
+    </div>
+
+    <div class="mt-4">
+      <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+    </div>
+  </div>
+</Layout>
