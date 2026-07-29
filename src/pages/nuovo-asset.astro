@@ -1,0 +1,234 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getNextAvailableCode } from '../lib/assetFunctions';
+import { supabase } from '../lib/supabaseClient';
+
+// Ottieni il prossimo codice disponibile (se vuoi mostrarlo)
+let nextCode = '';
+try {
+  nextCode = await getNextAvailableCode();
+} catch (e) {
+  // Se non ci sono codici disponibili, non importa
+}
+---
+
+<Layout title="Nuovo Asset">
+  <div class="p-4 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">➕ Nuovo Asset</h1>
+    
+    <form id="assetForm" class="bg-white shadow rounded-lg p-6">
+      <!-- Campo Codice Univoco (opzionale) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Codice Univoco (opzionale)</label>
+        <input 
+          type="text" 
+          id="codice_univoco" 
+          class="w-full border rounded px-3 py-2"
+          placeholder="Es. ENAIP-0001"
+        />
+        {nextCode && (
+          <p class="text-sm text-gray-500 mt-1">Prossimo codice disponibile: <strong>{nextCode}</strong></p>
+        )}
+      </div>
+
+      <!-- Numero di Serie (OBBLIGATORIO) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Numero di Serie *</label>
+        <input 
+          type="text" 
+          id="numero_serie" 
+          class="w-full border rounded px-3 py-2"
+          placeholder="Es. ABC123XYZ789"
+          required
+        />
+      </div>
+
+      <!-- Tipo Asset -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Tipo Asset *</label>
+        <select id="tipo_asset" class="w-full border rounded px-3 py-2" required>
+          <option value="">Seleziona...</option>
+          <option value="Laptop">Laptop</option>
+          <option value="PCTower">PC Tower</option>
+          <option value="Monitor">Monitor</option>
+          <option value="Mouse">Mouse</option>
+          <option value="Tastiera">Tastiera</option>
+          <option value="Cellulare">Cellulare</option>
+          <option value="Schermo">Schermo</option>
+          <option value="Altro">Altro</option>
+        </select>
+      </div>
+
+      <!-- Marca -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Marca *</label>
+        <input 
+          type="text" 
+          id="marca" 
+          class="w-full border rounded px-3 py-2"
+          placeholder="Es. Dell, HP, Apple"
+          required
+        />
+      </div>
+
+      <!-- Modello -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Modello *</label>
+        <input 
+          type="text" 
+          id="modello" 
+          class="w-full border rounded px-3 py-2"
+          placeholder="Es. Latitude 5520"
+          required
+        />
+      </div>
+
+      <!-- Sede -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Sede *</label>
+        <select id="sede" class="w-full border rounded px-3 py-2" required>
+          <option value="">Seleziona...</option>
+          <option value="Milano">Milano</option>
+          <option value="Bergamo">Bergamo</option>
+          <option value="Brescia">Brescia</option>
+          <option value="Como">Como</option>
+          <option value="Lecco">Lecco</option>
+          <option value="Varese">Varese</option>
+          <option value="Sondrio">Sondrio</option>
+          <option value="Lodi">Lodi</option>
+          <option value="Cremona">Cremona</option>
+          <option value="Mantova">Mantova</option>
+        </select>
+      </div>
+
+      <!-- Stanza/Ufficio -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Stanza/Ufficio</label>
+        <input 
+          type="text" 
+          id="stanza_ufficio" 
+          class="w-full border rounded px-3 py-2"
+          placeholder="Es. Piano 3 - Stanza 204"
+        />
+      </div>
+
+      <!-- Stato -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Stato *</label>
+        <select id="stato" class="w-full border rounded px-3 py-2" required>
+          <option value="In Magazzino">In Magazzino</option>
+          <option value="Assegnato">Assegnato</option>
+          <option value="In Manutenzione">In Manutenzione</option>
+          <option value="Dismesso">Dismesso</option>
+        </select>
+      </div>
+
+      <!-- Data Acquisto -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Data Acquisto</label>
+        <input 
+          type="date" 
+          id="data_acquisto" 
+          class="w-full border rounded px-3 py-2"
+        />
+      </div>
+
+      <!-- Costo -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Costo Acquisto (€)</label>
+        <input 
+          type="number" 
+          id="costo_acquisto" 
+          class="w-full border rounded px-3 py-2"
+          step="0.01"
+          placeholder="0.00"
+        />
+      </div>
+
+      <!-- Scadenza Garanzia -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Scadenza Garanzia</label>
+        <input 
+          type="date" 
+          id="scadenza_garanzia" 
+          class="w-full border rounded px-3 py-2"
+        />
+      </div>
+
+      <!-- Note -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Note</label>
+        <textarea 
+          id="note" 
+          class="w-full border rounded px-3 py-2"
+          rows="3"
+          placeholder="Eventuali note sull'asset..."
+        ></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button 
+          type="button"
+          id="salvaBtn"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
+        >
+          💾 Salva Asset
+        </button>
+      </div>
+
+      <div id="messaggio" class="mt-4 hidden"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('salvaBtn').addEventListener('click', async function() {
+      const form = document.getElementById('assetForm');
+      const messaggio = document.getElementById('messaggio');
+      
+      // Raccogli i dati
+      const assetData = {
+        codice_univoco: document.getElementById('codice_univoco').value || null,
+        numero_serie: document.getElementById('numero_serie').value,
+        tipo_asset: document.getElementById('tipo_asset').value,
+        marca: document.getElementById('marca').value,
+        modello: document.getElementById('modello').value,
+        sede: document.getElementById('sede').value,
+        stanza_ufficio: document.getElementById('stanza_ufficio').value || null,
+        stato: document.getElementById('stato').value,
+        data_acquisto: document.getElementById('data_acquisto').value || null,
+        costo_acquisto: document.getElementById('costo_acquisto').value || null,
+        scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
+        note: document.getElementById('note').value || null
+      };
+
+      // Validazione base
+      if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('asset')
+          .insert([assetData])
+          .select();
+
+        if (error) throw error;
+
+        messaggio.className = 'mt-4 p-3 bg-green-100 text-green-700 rounded';
+        messaggio.textContent = `✅ Asset "${assetData.marca} ${assetData.modello}" salvato con successo!`;
+        
+        // Resetta il form
+        form.reset();
+        document.getElementById('codice_univoco').value = '';
+        document.getElementById('stato').value = 'In Magazzino';
+
+      } catch (error) {
+        console.error('Errore:', error);
+        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.textContent = `❌ Errore: ${error.message}`;
+      }
+    });
+  </script>
+</Layout>
