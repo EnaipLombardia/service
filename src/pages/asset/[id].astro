@@ -1,0 +1,118 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabaseClient';
+
+export async function getStaticPaths() {
+  const { data } = await supabase.from('asset').select('id');
+  return data.map(asset => ({ params: { id: asset.id } }));
+}
+
+const { id } = Astro.params;
+const { data: asset, error } = await supabase
+  .from('asset')
+  .select('*')
+  .eq('id', id)
+  .single();
+
+// Ottieni lo storico delle assegnazioni
+let history = [];
+if (asset) {
+  const { data } = await supabase
+    .from('assegnazioni')
+    .select('*')
+    .eq('asset_id', asset.id)
+    .order('data_inizio', { ascending: false });
+  history = data || [];
+}
+---
+
+<Layout title="Dettaglio Asset">
+  {asset ? (
+    <div class="p-4 max-w-4xl mx-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">{asset.numero_serie || asset.codice_univoco || 'Asset'}</h1>
+        <span class={`px-3 py-1 rounded ${
+          asset.stato === 'Assegnato' ? 'bg-green-200 text-green-800' :
+          asset.stato === 'In Magazzino' ? 'bg-yellow-200 text-yellow-800' :
+          asset.stato === 'In Manutenzione' ? 'bg-orange-200 text-orange-800' :
+          'bg-red-200 text-red-800'
+        }`}>
+          {asset.stato}
+        </span>
+      </div>
+
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {asset.codice_univoco && (
+            <div><strong>Codice ENAIP:</strong> {asset.codice_univoco}</div>
+          )}
+          <div><strong>Numero Serie:</strong> {asset.numero_serie || 'N/A'}</div>
+          <div><strong>Tipo:</strong> {asset.tipo_asset}</div>
+          <div><strong>Marca:</strong> {asset.marca}</div>
+          <div><strong>Modello:</strong> {asset.modello}</div>
+          <div><strong>Sede:</strong> {asset.sede}</div>
+          <div><strong>Stanza:</strong> {asset.stanza_ufficio || 'N/A'}</div>
+          <div><strong>Data Acquisto:</strong> {asset.data_acquisto || 'N/A'}</div>
+          <div><strong>Costo:</strong> {asset.costo_acquisto ? `€${asset.costo_acquisto}` : 'N/A'}</div>
+          <div><strong>Scadenza Garanzia:</strong> {asset.scadenza_garanzia || 'N/A'}</div>
+        </div>
+        {asset.note && (
+          <div class="mt-4 border-t pt-4">
+            <strong>Note:</strong> {asset.note}
+          </div>
+        )}
+        <div class="mt-4 text-sm text-gray-500 border-t pt-4">
+          <div>Inserito da: {asset.creato_da || 'N/A'}</div>
+          <div>Modificato da: {asset.modificato_da || 'N/A'}</div>
+        </div>
+      </div>
+
+      <h2 class="text-xl font-bold mb-3">📜 Storico Assegnazioni</h2>
+      {history.length === 0 ? (
+        <p class="text-gray-500">Nessuna assegnazione registrata.</p>
+      ) : (
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Dipendente</th>
+                <th class="p-3 text-left">Email</th>
+                <th class="p-3 text-left">Data Inizio</th>
+                <th class="p-3 text-left">Data Fine</th>
+                <th class="p-3 text-left">Motivo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map(record => (
+                <tr key={record.id} class="border-t hover:bg-gray-50">
+                  <td class="p-3">{record.dipendente_nome}</td>
+                  <td class="p-3">{record.dipendente_email}</td>
+                  <td class="p-3">{record.data_inizio}</td>
+                  <td class="p-3">{record.data_fine || '🟢 Attuale'}</td>
+                  <td class="p-3">{record.motivo || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div class="mt-6 flex gap-2">
+        <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">← Torna indietro</a>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="window.location.href=`/assegna?id=${asset.id}`">
+          🔄 Assegna
+        </button>
+        {asset.stato === 'Assegnato' && (
+          <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600" onclick="window.location.href=`/restituisci?id=${asset.id}`">
+            📤 Restituisci
+          </button>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div class="p-4">
+      <h1 class="text-2xl font-bold text-red-600">Asset non trovato</h1>
+      <a href="/" class="text-blue-500 hover:underline">Torna alla dashboard</a>
+    </div>
+  )}
+</Layout>
