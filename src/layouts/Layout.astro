@@ -16,6 +16,21 @@ const { title } = Astro.props;
   </head>
   <body>
     <main>
+      <!-- AGGIUNGI IL LOGO QUI (sopra il contenuto) -->
+      <div class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+          <!-- Logo come immagine -->
+          <img 
+            src="/images/enaip-logo.png" 
+            alt="ENAIP Lombardia" 
+            class="h-10 w-auto"
+          />
+          <!-- Oppure Logo come testo -->
+          <!-- <span class="text-xl font-bold text-blue-700">ENAIP Lombardia</span> -->
+        </div>
+      </div>
+      
+      <!-- Il contenuto della pagina -->
       <slot />
     </main>
   </body>
