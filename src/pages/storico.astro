@@ -1,0 +1,117 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+
+// Ottieni tutte le assegnazioni con i dettagli dell'asset
+const { data: assignments, error } = await supabase
+  .from('assegnazioni')
+  .select(`
+    *,
+    asset:asset_id (
+      id,
+      numero_serie,
+      marca,
+      modello,
+      tipo_asset,
+      codice_univoco
+    )
+  `)
+  .order('data_inizio', { ascending: false })
+  .limit(100);
+
+// Ottieni il conteggio totale
+const { count } = await supabase
+  .from('assegnazioni')
+  .select('*', { count: 'exact', head: true });
+
+const totalAssignments = count || 0;
+---
+
+<Layout title="Storico Generale">
+  <div class="p-4 max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">📜 Storico Generale</h1>
+      <span class="bg-gray-200 px-3 py-1 rounded text-sm">
+        {totalAssignments} assegnazioni totali
+      </span>
+    </div>
+
+    {error ? (
+      <div class="bg-red-100 p-4 rounded text-red-700">
+        ❌ Errore nel caricamento dello storico: {error.message}
+      </div>
+    ) : assignments && assignments.length > 0 ? (
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left text-sm font-semibold">Asset</th>
+                <th class="p-3 text-left text-sm font-semibold">Dipendente</th>
+                <th class="p-3 text-left text-sm font-semibold">Data Inizio</th>
+                <th class="p-3 text-left text-sm font-semibold">Data Fine</th>
+                <th class="p-3 text-left text-sm font-semibold">Motivo</th>
+                <th class="p-3 text-left text-sm font-semibold">Stato</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assignments.map(record => {
+                const isActive = !record.data_fine;
+                return (
+                  <tr key={record.id} class="border-t hover:bg-gray-50">
+                    <td class="p-3">
+                      <a 
+                        href={`/asset/${record.asset.id}`}
+                        class="text-blue-600 hover:underline"
+                      >
+                        {record.asset.numero_serie || record.asset.codice_univoco || record.asset.marca}
+                      </a>
+                      <span class="text-sm text-gray-500 block">
+                        {record.asset.marca} {record.asset.modello}
+                      </span>
+                    </td>
+                    <td class="p-3">
+                      <div class="font-medium">{record.dipendente_nome}</div>
+                      <div class="text-sm text-gray-500">{record.dipendente_email}</div>
+                    </td>
+                    <td class="p-3">{record.data_inizio}</td>
+                    <td class="p-3">
+                      {record.data_fine || <span class="text-green-600 font-medium">Attuale</span>}
+                    </td>
+                    <td class="p-3">{record.motivo || '-'}</td>
+                    <td class="p-3">
+                      <span class={`px-2 py-1 rounded text-sm ${
+                        isActive ? 'bg-green-200 text-green-800' : 'bg-gray-200 text-gray-600'
+                      }`}>
+                        {isActive ? '🟢 Attivo' : '📅 Chiuso'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {totalAssignments > 100 && (
+          <div class="p-3 bg-gray-50 text-center text-sm text-gray-500">
+            Mostrati 100 su {totalAssignments} assegnazioni.
+            <a href="/storico-completo" class="text-blue-500 hover:underline ml-1">
+              Vedi tutte →
+            </a>
+          </div>
+        )}
+      </div>
+    ) : (
+      <div class="bg-yellow-50 p-8 rounded-lg text-center">
+        <p class="text-gray-500">📭 Nessuna assegnazione registrata.</p>
+        <p class="text-sm text-gray-400 mt-1">
+          Inizia a censire gli asset e ad assegnarli ai dipendenti.
+        </p>
+      </div>
+    )}
+
+    <div class="mt-4">
+      <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+    </div>
+  </div>
+</Layout>
