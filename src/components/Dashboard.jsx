@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [showOcr, setShowOcr] = useState(false);
   const [ocrResult, setOcrResult] = useState(null);
   const [toast, setToast] = useState(null);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -193,6 +194,16 @@ export default function Dashboard() {
             {showOcr ? '📷 Nascondi OCR' : '📷 Leggi seriale'}
           </button>
           <ExportButton />
+          <button
+            onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+            className={`px-3 py-1 rounded text-sm transition-colors ${
+              notificationsEnabled 
+                ? 'bg-green-500 text-white hover:bg-green-600' 
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+            }`}
+          >
+            {notificationsEnabled ? '🔔 On' : '🔕 Off'}
+          </button>
         </div>
       </div>
       
@@ -383,6 +394,24 @@ export default function Dashboard() {
         >
           📜 Storico Generale
         </a>
+        <a
+          href="/admin"
+          className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 inline-block transition-colors"
+        >
+          📊 Admin
+        </a>
+        <a
+          href="/audit"
+          className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 inline-block transition-colors"
+        >
+          📜 Audit
+        </a>
+        <a
+          href="/scadenze"
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 inline-block transition-colors"
+        >
+          🔔 Scadenze
+        </a>
         {nextCode && (
           <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
@@ -450,9 +479,12 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Footer con crediti */}
+      {/* Footer */}
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
         <p>ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
+        <p className="text-xs mt-1">
+          {notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}
+        </p>
       </div>
     </div>
   );
