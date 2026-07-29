@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabaseClient';
 const urlParams = new URL(Astro.request.url).searchParams;
 const assetId = urlParams.get('id');
 let asset = null;
+let currentAssignment = null;
 
 if (assetId) {
   const { data } = await supabase
@@ -14,6 +15,16 @@ if (assetId) {
     .eq('id', assetId)
     .single();
   asset = data;
+
+  if (asset) {
+    const { data: assData } = await supabase
+      .from('assegnazioni')
+      .select('*')
+      .eq('asset_id', assetId)
+      .is('data_fine', null)
+      .single();
+    currentAssignment = assData;
+  }
 }
 ---
 
@@ -29,51 +40,63 @@ if (assetId) {
           <p><strong>Stato attuale:</strong> {asset.stato}</p>
         </div>
 
-        <form id="assignForm">
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Email Dipendente *</label>
-            <input 
-              type="email" 
-              id="email" 
-              class="w-full border rounded px-3 py-2"
-              placeholder="nome.cognome@enaip.lombardia.it"
-              required
-            />
+        {currentAssignment ? (
+          <div class="mb-4 p-3 bg-yellow-50 rounded border border-yellow-200">
+            <p>⚠️ Questo asset è già assegnato a <strong>{currentAssignment.dipendente_nome}</strong></p>
+            <p class="text-sm text-gray-600">Dal {currentAssignment.data_inizio}</p>
+            <p class="text-sm mt-2">Per riassegnarlo, prima <a href={`/restituisci?id=${asset.id}`} class="text-blue-500 hover:underline">restituiscilo</a>.</p>
           </div>
+        ) : (
+          <form id="assignForm">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Email Dipendente *</label>
+              <input 
+                type="email" 
+                id="email" 
+                class="w-full border rounded px-3 py-2"
+                placeholder="nome.cognome@enaip.lombardia.it"
+                required
+              />
+            </div>
 
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Nome Dipendente *</label>
-            <input 
-              type="text" 
-              id="nome" 
-              class="w-full border rounded px-3 py-2"
-              placeholder="Mario Rossi"
-              required
-            />
-          </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Nome Dipendente *</label>
+              <input 
+                type="text" 
+                id="nome" 
+                class="w-full border rounded px-3 py-2"
+                placeholder="Mario Rossi"
+                required
+              />
+            </div>
 
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-1">Motivo *</label>
-            <select id="motivo" class="w-full border rounded px-3 py-2" required>
-              <option value="Consegna">Consegna</option>
-              <option value="Sostituzione">Sostituzione</option>
-              <option value="Trasferimento">Trasferimento</option>
-              <option value="Altro">Altro</option>
-            </select>
-          </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Motivo *</label>
+              <select id="motivo" class="w-full border rounded px-3 py-2" required>
+                <option value="Consegna">Consegna</option>
+                <option value="Sostituzione">Sostituzione</option>
+                <option value="Trasferimento">Trasferimento</option>
+                <option value="Altro">Altro</option>
+              </select>
+            </div>
 
-          <div class="flex gap-2">
-            <button 
-              type="button"
-              id="assegnaBtn"
-              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
-            >
-              ✅ Conferma Assegnazione
-            </button>
-          </div>
+            <div class="flex gap-2">
+              <button 
+                type="button"
+                id="assegnaBtn"
+                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
+              >
+                ✅ Conferma Assegnazione
+              </button>
+            </div>
 
-          <div id="messaggio" class="mt-4 hidden"></div>
-        </form>
+            <div id="messaggio" class="mt-4 hidden"></div>
+          </form>
+        )}
+
+        <div class="mt-4">
+          <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline">← Torna al dettaglio</a>
+        </div>
       </div>
     ) : (
       <div class="bg-yellow-100 p-4 rounded">
