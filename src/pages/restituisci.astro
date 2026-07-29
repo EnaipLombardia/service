@@ -1,0 +1,128 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const assetId = urlParams.get('id');
+let asset = null;
+let currentAssignment = null;
+
+if (assetId) {
+  const { data } = await supabase
+    .from('asset')
+    .select('*')
+    .eq('id', assetId)
+    .single();
+  asset = data;
+
+  if (asset) {
+    const { data: assData } = await supabase
+      .from('assegnazioni')
+      .select('*')
+      .eq('asset_id', assetId)
+      .is('data_fine', null)
+      .single();
+    currentAssignment = assData;
+  }
+}
+---
+
+<Layout title="Restituisci Asset">
+  <div class="p-4 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">📤 Restituisci Asset</h1>
+    
+    {asset ? (
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="mb-4 p-3 bg-gray-100 rounded">
+          <p><strong>Asset:</strong> {asset.marca} {asset.modello}</p>
+          <p><strong>Seriale:</strong> {asset.numero_serie}</p>
+          <p><strong>Stato attuale:</strong> {asset.stato}</p>
+        </div>
+
+        {currentAssignment ? (
+          <>
+            <div class="mb-4 p-3 bg-yellow-50 rounded border border-yellow-200">
+              <p><strong>Assegnato a:</strong> {currentAssignment.dipendente_nome}</p>
+              <p><strong>Email:</strong> {currentAssignment.dipendente_email}</p>
+              <p><strong>Dal:</strong> {currentAssignment.data_inizio}</p>
+            </div>
+
+            <form id="returnForm">
+              <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Motivo della restituzione</label>
+                <select id="motivo" class="w-full border rounded px-3 py-2">
+                  <option value="Restituzione volontaria">Restituzione volontaria</option>
+                  <option value="Dismissione">Dismissione</option>
+                  <option value="Sostituzione">Sostituzione</option>
+                  <option value="Fine contratto">Fine contratto</option>
+                  <option value="Danneggiato">Danneggiato</option>
+                </select>
+              </div>
+
+              <div class="flex gap-2">
+                <button 
+                  type="button"
+                  id="restituisciBtn"
+                  class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 w-full"
+                >
+                  📤 Conferma Restituzione
+                </button>
+              </div>
+
+              <div id="messaggio" class="mt-4 hidden"></div>
+            </form>
+          </>
+        ) : (
+          <div class="bg-green-100 p-4 rounded">
+            <p>✅ Questo asset non risulta attualmente assegnato a nessuno.</p>
+            <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline">← Torna al dettaglio</a>
+          </div>
+        )}
+      </div>
+    ) : (
+      <div class="bg-yellow-100 p-4 rounded">
+        <p>⚠️ Nessun asset selezionato.</p>
+        <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      </div>
+    )}
+  </div>
+
+  <script>
+    document.getElementById('restituisciBtn')?.addEventListener('click', async function() {
+      const messaggio = document.getElementById('messaggio');
+      const assetId = new URLSearchParams(window.location.search).get('id');
+
+      try {
+        // Chiudi l'assegnazione corrente
+        const { error } = await supabase
+          .from('assegnazioni')
+          .update({ 
+            data_fine: new Date().toISOString().split('T')[0],
+            motivo: document.getElementById('motivo').value
+          })
+          .eq('asset_id', assetId)
+          .is('data_fine', null);
+
+        if (error) throw error;
+
+        // Aggiorna lo stato dell'asset
+        await supabase
+          .from('asset')
+          .update({ stato: 'In Magazzino' })
+          .eq('id', assetId);
+
+        messaggio.className = 'mt-4 p-3 bg-green-100 text-green-700 rounded';
+        messaggio.textContent = '✅ Asset restituito con successo!';
+        
+        setTimeout(() => {
+          window.location.href = `/asset/${assetId}`;
+        }, 2000);
+
+      } catch (error) {
+        console.error('Errore:', error);
+        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.textContent = `❌ Errore: ${error.message}`;
+      }
+    });
+  </script>
+</Layout>
