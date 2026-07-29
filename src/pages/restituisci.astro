@@ -59,6 +59,16 @@ if (assetId) {
                 </select>
               </div>
 
+              <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Note aggiuntive</label>
+                <textarea 
+                  id="note" 
+                  class="w-full border rounded px-3 py-2"
+                  rows="2"
+                  placeholder="Eventuali note sulla restituzione..."
+                ></textarea>
+              </div>
+
               <div class="flex gap-2">
                 <button 
                   type="button"
@@ -78,6 +88,10 @@ if (assetId) {
             <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline">← Torna al dettaglio</a>
           </div>
         )}
+
+        <div class="mt-4">
+          <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline">← Torna al dettaglio</a>
+        </div>
       </div>
     ) : (
       <div class="bg-yellow-100 p-4 rounded">
@@ -91,6 +105,8 @@ if (assetId) {
     document.getElementById('restituisciBtn')?.addEventListener('click', async function() {
       const messaggio = document.getElementById('messaggio');
       const assetId = new URLSearchParams(window.location.search).get('id');
+      const motivo = document.getElementById('motivo').value;
+      const note = document.getElementById('note').value;
 
       try {
         // Chiudi l'assegnazione corrente
@@ -98,7 +114,7 @@ if (assetId) {
           .from('assegnazioni')
           .update({ 
             data_fine: new Date().toISOString().split('T')[0],
-            motivo: document.getElementById('motivo').value
+            note: note || null
           })
           .eq('asset_id', assetId)
           .is('data_fine', null);
@@ -108,7 +124,10 @@ if (assetId) {
         // Aggiorna lo stato dell'asset
         await supabase
           .from('asset')
-          .update({ stato: 'In Magazzino' })
+          .update({ 
+            stato: 'In Magazzino',
+            note: note ? `Restituito: ${note}` : null
+          })
           .eq('id', assetId);
 
         messaggio.className = 'mt-4 p-3 bg-green-100 text-green-700 rounded';
