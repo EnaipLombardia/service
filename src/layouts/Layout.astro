@@ -7,31 +7,87 @@ const { title } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+    <style>
+      /* Transizioni per il tema */
+      * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      }
+      .dark {
+        background-color: #0f172a;
+        color: #f1f5f9;
+      }
+      .dark .bg-white { background-color: #1e293b; }
+      .dark .bg-gray-100 { background-color: #334155; }
+      .dark .bg-gray-50 { background-color: #1e293b; }
+      .dark .border-gray-200 { border-color: #334155; }
+      .dark .text-gray-600 { color: #94a3b8; }
+      .dark .text-gray-500 { color: #94a3b8; }
+      .dark .text-gray-700 { color: #e2e8f0; }
+      .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5); }
+      .dark .bg-blue-100 { background-color: #1e3a5f; color: #93c5fd; }
+      .dark .bg-green-100 { background-color: #14532d; color: #86efac; }
+      .dark .bg-yellow-100 { background-color: #78350f; color: #fcd34d; }
+      .dark .bg-orange-100 { background-color: #7c2d12; color: #fdba74; }
+      .dark .bg-red-100 { background-color: #7f1d1d; color: #fca5a5; }
+      .dark .bg-purple-100 { background-color: #4c1d95; color: #c4b5fd; }
+      .dark .bg-gray-200 { background-color: #334155; }
+    </style>
+    <script>
+      // Rileva il tema salvato o le preferenze del sistema
+      if (localStorage.getItem('theme') === 'dark' || 
+          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </head>
   <body>
     <main>
-      <!-- AGGIUNGI IL LOGO QUI (sopra il contenuto) -->
-      <div class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          <!-- Logo come immagine -->
-          <img 
-            src="/images/enaip-logo.png" 
-            alt="ENAIP Lombardia" 
-            class="h-10 w-auto"
-          />
-          <!-- Oppure Logo come testo -->
-          <!-- <span class="text-xl font-bold text-blue-700">ENAIP Lombardia</span> -->
+      <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <img 
+              src="/images/enaip-logo.png" 
+              alt="ENAIP Lombardia" 
+              class="h-10 w-auto"
+            />
+          </div>
+          <div class="flex items-center gap-3">
+            <button 
+              id="themeToggle"
+              class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Toggle theme"
+            >
+              <span id="themeIcon">🌙</span>
+            </button>
+          </div>
         </div>
       </div>
       
-      <!-- Il contenuto della pagina -->
       <slot />
     </main>
+
+    <script>
+      const toggle = document.getElementById('themeToggle');
+      const icon = document.getElementById('themeIcon');
+      
+      toggle.addEventListener('click', () => {
+        const html = document.documentElement;
+        if (html.classList.contains('dark')) {
+          html.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+          icon.textContent = '🌙';
+        } else {
+          html.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+          icon.textContent = '☀️';
+        }
+      });
+    </script>
   </body>
 </html>
