@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+
+const urlParams = new URL(Astro.request.url).searchParams;
+const assetId = urlParams.get('id');
+let asset = null;
+
+if (assetId) {
+  const { data } = await supabase
+    .from('asset')
+    .select('*')
+    .eq('id', assetId)
+    .single();
+  asset = data;
+}
+---
+
+<Layout title="Stampa Etichetta">
+  <div class="p-4 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">🏷️ Stampa Etichetta</h1>
+    
+    {asset ? (
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 text-center">
+        <div class="mb-4">
+          <div class="text-sm text-gray-500 dark:text-gray-400">ENAIP Lombardia</div>
+          <div class="text-2xl font-bold mt-2">{asset.marca} {asset.modello}</div>
+          <div class="text-lg mt-1">{asset.numero_serie || asset.codice_univoco || 'N/A'}</div>
+        </div>
+        
+        <div class="flex justify-center my-4">
+          <div id="qr-container">
+            <!-- Il QR code verrà generato qui -->
+          </div>
+        </div>
+        
+        <div class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+          Scansiona il QR per aprire i dettagli dell'asset
+        </div>
+        
+        <div class="mt-6 flex gap-2 justify-center">
+          <button 
+            onclick="window.print()"
+            class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+          >
+            🖨️ Stampa Etichetta
+          </button>
+          <a 
+            href={`/asset/${asset.id}`}
+            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+          >
+            ← Torna al dettaglio
+          </a>
+        </div>
+      </div>
+    ) : (
+      <div class="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded">
+        <p>⚠️ Nessun asset selezionato.</p>
+        <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      </div>
+    )}
+  </div>
+  
+  <script>
+    // Importa la libreria QRCode e genera il QR
+    document.addEventListener('DOMContentLoaded', async () => {
+      const assetId = new URLSearchParams(window.location.search).get('id');
+      if (!assetId) return;
+      
+      const baseUrl = window.location.origin;
+      const qrValue = `${baseUrl}/asset/${assetId}`;
+      
+      const { default: QRCode } = await import('qrcode');
+      const container = document.getElementById('qr-container');
+      
+      QRCode.toCanvas(container, qrValue, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      }, (error) => {
+        if (error) console.error('Errore QR:', error);
+      });
+    });
+  </script>
+</Layout>
