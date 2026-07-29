@@ -47,7 +47,7 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('asset')
         .select('*')
-        .eq('codice_univoco', code)
+        .eq('numero_serie', code)
         .single();
       
       if (error) throw error;
@@ -58,10 +58,16 @@ export default function Dashboard() {
     }
   }
 
+  // Funzione per navigare al dettaglio asset
+  function goToAssetDetail(assetId) {
+    window.location.href = `/asset/${assetId}`;
+  }
+
   return (
     <div className="p-4 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">📦 Asset ENAIP Lombardia</h1>
       
+      {/* Scanner */}
       <div className="mb-6 bg-white p-4 rounded-lg shadow">
         <h2 className="text-lg font-semibold mb-2">🔍 Scansiona un asset</h2>
         <Scanner onDetected={handleScan} />
@@ -73,19 +79,20 @@ export default function Dashboard() {
               <div className="mt-2 text-green-600">
                 ✅ Asset trovato: {scannedAsset.marca} {scannedAsset.modello}
                 <button 
-                  className="ml-3 bg-blue-500 text-white px-3 py-1 rounded text-sm"
-                  onClick={() => window.location.href = `/asset/${scannedAsset.id}`}
+                  className="ml-3 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                  onClick={() => goToAssetDetail(scannedAsset.id)}
                 >
                   Vedi dettaglio
                 </button>
               </div>
             ) : (
-              <p className="mt-2 text-red-600">❌ Asset non trovato. Vuoi crearlo?</p>
+              <p className="mt-2 text-red-600">❌ Asset non trovato.</p>
             )}
           </div>
         )}
       </div>
 
+      {/* Statistiche */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-blue-100 p-4 rounded-lg text-center">
           <div className="text-2xl font-bold">{stats.totale}</div>
@@ -109,22 +116,23 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Pulsanti azione */}
       <div className="flex flex-wrap gap-2 mb-6">
-        <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={() => window.location.href = '/nuovo-asset'}
+        <a 
+          href="/nuovo-asset"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block"
         >
           ➕ Nuovo Asset
-        </button>
+        </a>
         <button 
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          onClick={() => window.location.href = '/assegna'}
+          onClick={() => alert('🔄 Funzione Assegna in sviluppo!')}
         >
           🔄 Assegna
         </button>
         <button 
           className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-          onClick={() => window.location.href = '/censimento'}
+          onClick={() => alert('📋 Funzione Censimento Rapido in sviluppo!')}
         >
           📋 Censimento Rapido
         </button>
@@ -135,6 +143,7 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* Asset recenti */}
       <div>
         <h2 className="text-lg font-semibold mb-2">📋 Ultimi asset inseriti</h2>
         {loading ? (
@@ -147,11 +156,11 @@ export default function Dashboard() {
               <li 
                 key={asset.id} 
                 className="p-3 hover:bg-gray-50 cursor-pointer"
-                onClick={() => window.location.href = `/asset/${asset.id}`}
+                onClick={() => goToAssetDetail(asset.id)}
               >
                 <div className="flex justify-between items-center">
                   <div>
-                    <span className="font-semibold">{asset.codice_univoco}</span>
+                    <span className="font-semibold">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                     <span className="text-gray-600 ml-2">- {asset.marca} {asset.modello}</span>
                   </div>
                   <span className={`px-2 py-1 rounded text-sm ${
