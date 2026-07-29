@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -92,40 +93,52 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">📦 Asset ENAIP Lombardia</h1>
-      
-      {/* Scanner */}
-      <div className="mb-6 bg-white p-4 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-2">🔍 Scansiona un asset</h2>
-        <Scanner onDetected={handleScan} />
-        
-        {scannedCode && (
-          <div className="mt-3 p-3 bg-gray-100 rounded">
-            <p>Codice rilevato: <strong>{scannedCode}</strong></p>
-            {scannedAsset ? (
-              <div className="mt-2 text-green-600">
-                ✅ Asset trovato: {scannedAsset.marca} {scannedAsset.modello}
-                <button 
-                  className="ml-3 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-                  onClick={() => goToAssetDetail(scannedAsset.id)}
-                >
-                  Vedi dettaglio
-                </button>
-              </div>
-            ) : (
-              <div className="mt-2 text-red-600">
-                <p>❌ Asset non trovato.</p>
-                <button 
-                  className="mt-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-                  onClick={() => window.location.href = `/nuovo-asset?seriale=${scannedCode}`}
-                >
-                  Crea nuovo asset con questo seriale
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">📦 Asset ENAIP Lombardia</h1>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowScanner(!showScanner)}
+            className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 text-sm"
+          >
+            {showScanner ? '📷 Nascondi Scanner' : '📷 Scanner'}
+          </button>
+        </div>
       </div>
+      
+      {/* Scanner (toggle) */}
+      {showScanner && (
+        <div className="mb-6 bg-white p-4 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-2">🔍 Scansiona un asset</h2>
+          <Scanner onDetected={handleScan} />
+          
+          {scannedCode && (
+            <div className="mt-3 p-3 bg-gray-100 rounded">
+              <p>Codice rilevato: <strong>{scannedCode}</strong></p>
+              {scannedAsset ? (
+                <div className="mt-2 text-green-600">
+                  ✅ Asset trovato: {scannedAsset.marca} {scannedAsset.modello}
+                  <button 
+                    className="ml-3 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                    onClick={() => goToAssetDetail(scannedAsset.id)}
+                  >
+                    Vedi dettaglio
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-2 text-red-600">
+                  <p>❌ Asset non trovato.</p>
+                  <button 
+                    className="mt-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                    onClick={() => window.location.href = `/nuovo-asset?seriale=${scannedCode}`}
+                  >
+                    Crea nuovo asset con questo seriale
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Ricerca rapida */}
       <div className="mb-4">
@@ -231,12 +244,18 @@ export default function Dashboard() {
         >
           🔄 Assegna
         </button>
-        <button 
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-          onClick={() => alert('📋 Funzione Censimento Rapido in sviluppo!')}
+        <a
+          href="/censimento"
+          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 inline-block"
         >
           📋 Censimento Rapido
-        </button>
+        </a>
+        <a
+          href="/statistiche"
+          className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 inline-block"
+        >
+          📊 Statistiche
+        </a>
         {nextCode && (
           <span className="bg-gray-200 px-4 py-2 rounded text-sm flex items-center">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
