@@ -5,7 +5,7 @@
 [build.environment]
   NODE_VERSION = "20"
   VITE_SUPABASE_URL = "https://bpjdjigfworwvyrgwsqh.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29yd3Z5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk"
+  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5NzYwNzksImV4cCI6MjA2MTU1MjA3OX0.2Z5tYrqfFqT_9_J1nVg7RVlF-PZqLcK-LxnZRHuDp1k"
 
 [[plugins]]
   package = "netlify-plugin-cypress"
