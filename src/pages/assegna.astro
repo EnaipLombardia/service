@@ -1,0 +1,141 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+
+// Ottieni l'ID dell'asset dalla query string (se presente)
+const urlParams = new URL(Astro.request.url).searchParams;
+const assetId = urlParams.get('id');
+let asset = null;
+
+if (assetId) {
+  const { data } = await supabase
+    .from('asset')
+    .select('*')
+    .eq('id', assetId)
+    .single();
+  asset = data;
+}
+---
+
+<Layout title="Assegna Asset">
+  <div class="p-4 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">🔄 Assegna Asset</h1>
+    
+    {asset ? (
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="mb-4 p-3 bg-gray-100 rounded">
+          <p><strong>Asset:</strong> {asset.marca} {asset.modello}</p>
+          <p><strong>Seriale:</strong> {asset.numero_serie}</p>
+          <p><strong>Stato attuale:</strong> {asset.stato}</p>
+        </div>
+
+        <form id="assignForm">
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Email Dipendente *</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="w-full border rounded px-3 py-2"
+              placeholder="nome.cognome@enaip.lombardia.it"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Nome Dipendente *</label>
+            <input 
+              type="text" 
+              id="nome" 
+              class="w-full border rounded px-3 py-2"
+              placeholder="Mario Rossi"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-1">Motivo *</label>
+            <select id="motivo" class="w-full border rounded px-3 py-2" required>
+              <option value="Consegna">Consegna</option>
+              <option value="Sostituzione">Sostituzione</option>
+              <option value="Trasferimento">Trasferimento</option>
+              <option value="Altro">Altro</option>
+            </select>
+          </div>
+
+          <div class="flex gap-2">
+            <button 
+              type="button"
+              id="assegnaBtn"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
+            >
+              ✅ Conferma Assegnazione
+            </button>
+          </div>
+
+          <div id="messaggio" class="mt-4 hidden"></div>
+        </form>
+      </div>
+    ) : (
+      <div class="bg-yellow-100 p-4 rounded">
+        <p>⚠️ Nessun asset selezionato. Vai prima nella scheda dell'asset e clicca su "Assegna".</p>
+        <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      </div>
+    )}
+  </div>
+
+  <script>
+    document.getElementById('assegnaBtn')?.addEventListener('click', async function() {
+      const messaggio = document.getElementById('messaggio');
+      const email = document.getElementById('email').value;
+      const nome = document.getElementById('nome').value;
+      const motivo = document.getElementById('motivo').value;
+      const assetId = new URLSearchParams(window.location.search).get('id');
+
+      if (!email || !nome || !motivo) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.textContent = '⚠️ Compila tutti i campi obbligatori';
+        return;
+      }
+
+      try {
+        // 1. Chiudi l'assegnazione corrente (se esiste)
+        await supabase
+          .from('assegnazioni')
+          .update({ data_fine: new Date().toISOString().split('T')[0] })
+          .eq('asset_id', assetId)
+          .is('data_fine', null);
+
+        // 2. Crea la nuova assegnazione
+        const { error } = await supabase
+          .from('assegnazioni')
+          .insert([{
+            asset_id: assetId,
+            dipendente_email: email,
+            dipendente_nome: nome,
+            data_inizio: new Date().toISOString().split('T')[0],
+            motivo: motivo
+          }]);
+
+        if (error) throw error;
+
+        // 3. Aggiorna lo stato dell'asset
+        await supabase
+          .from('asset')
+          .update({ stato: 'Assegnato' })
+          .eq('id', assetId);
+
+        messaggio.className = 'mt-4 p-3 bg-green-100 text-green-700 rounded';
+        messaggio.textContent = `✅ Asset assegnato a ${nome} con successo!`;
+        
+        setTimeout(() => {
+          window.location.href = `/asset/${assetId}`;
+        }, 2000);
+
+      } catch (error) {
+        console.error('Errore:', error);
+        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.textContent = `❌ Errore: ${error.message}`;
+      }
+    });
+  </script>
+</Layout>
