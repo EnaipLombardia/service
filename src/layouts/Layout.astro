@@ -16,8 +16,10 @@ const { title } = Astro.props;
     <style>
       /* Transizioni per il tema */
       * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       }
+      
+      /* Dark Mode */
       .dark {
         background-color: #0f172a;
         color: #f1f5f9;
@@ -25,18 +27,73 @@ const { title } = Astro.props;
       .dark .bg-white { background-color: #1e293b; }
       .dark .bg-gray-100 { background-color: #334155; }
       .dark .bg-gray-50 { background-color: #1e293b; }
+      .dark .bg-gray-200 { background-color: #334155; }
       .dark .border-gray-200 { border-color: #334155; }
+      .dark .border-gray-300 { border-color: #475569; }
       .dark .text-gray-600 { color: #94a3b8; }
       .dark .text-gray-500 { color: #94a3b8; }
       .dark .text-gray-700 { color: #e2e8f0; }
+      .dark .text-gray-400 { color: #64748b; }
       .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5); }
+      .dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
       .dark .bg-blue-100 { background-color: #1e3a5f; color: #93c5fd; }
       .dark .bg-green-100 { background-color: #14532d; color: #86efac; }
       .dark .bg-yellow-100 { background-color: #78350f; color: #fcd34d; }
       .dark .bg-orange-100 { background-color: #7c2d12; color: #fdba74; }
       .dark .bg-red-100 { background-color: #7f1d1d; color: #fca5a5; }
       .dark .bg-purple-100 { background-color: #4c1d95; color: #c4b5fd; }
-      .dark .bg-gray-200 { background-color: #334155; }
+      .dark .bg-indigo-100 { background-color: #3730a3; color: #a5b4fc; }
+      .dark .bg-teal-100 { background-color: #134e4a; color: #5eead4; }
+      .dark .bg-gray-800 { background-color: #1e293b; }
+      .dark .bg-gray-900 { background-color: #0f172a; }
+      .dark .bg-yellow-50 { background-color: #78350f; color: #fcd34d; }
+      .dark .bg-green-50 { background-color: #14532d; color: #86efac; }
+      .dark .bg-red-50 { background-color: #7f1d1d; color: #fca5a5; }
+      .dark .bg-purple-50 { background-color: #4c1d95; color: #c4b5fd; }
+      .dark .hover\:bg-gray-50:hover { background-color: #334155; }
+      .dark .hover\:bg-gray-100:hover { background-color: #334155; }
+      .dark .hover\:bg-gray-200:hover { background-color: #475569; }
+      .dark .divide-y > * + * { border-color: #334155; }
+      .dark .border-b { border-color: #334155; }
+      .dark .border-t { border-color: #334155; }
+      
+      /* Animazioni */
+      @keyframes bounceIn {
+        0% { transform: translateY(100px); opacity: 0; }
+        60% { transform: translateY(-10px); opacity: 1; }
+        100% { transform: translateY(0); opacity: 1; }
+      }
+      .animate-bounce-in {
+        animation: bounceIn 0.5s ease-out;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .animate-pulse-slow {
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      
+      /* Scrollbar personalizzata */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      .dark ::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #94a3b8;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
     </style>
     <script>
       // Rileva il tema salvato o le preferenze del sistema
@@ -48,7 +105,8 @@ const { title } = Astro.props;
   </head>
   <body>
     <main>
-      <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <!-- Header con Logo e Dark Mode Toggle -->
+      <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
           <div class="flex items-center gap-3">
             <img 
@@ -62,6 +120,7 @@ const { title } = Astro.props;
               id="themeToggle"
               class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               aria-label="Toggle theme"
+              title="Cambia tema (Dark/Light)"
             >
               <span id="themeIcon">🌙</span>
             </button>
@@ -69,6 +128,7 @@ const { title } = Astro.props;
         </div>
       </div>
       
+      <!-- Contenuto della pagina -->
       <slot />
     </main>
 
