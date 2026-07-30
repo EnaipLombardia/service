@@ -16,7 +16,7 @@ const isHome = Astro.url.pathname === '/';
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#3b82f6" />
+    <meta name="theme-color" content="#006a4e" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
@@ -24,26 +24,21 @@ const isHome = Astro.url.pathname === '/';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
     
     <style>
-      /* Transizioni per il tema */
       * {
         transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       }
       
-      /* === DARK MODE - CORREZIONI CONTRASTO === */
       .dark {
         background-color: #0f172a;
         color: #f1f5f9;
-        color-scheme: dark;
       }
       
-      /* Sfondo contenitori */
       .dark .bg-white { background-color: #1e293b; }
       .dark .bg-gray-50 { background-color: #1e293b; }
       .dark .bg-gray-100 { background-color: #334155; }
       .dark .bg-gray-200 { background-color: #334155; }
       .dark .bg-gray-300 { background-color: #475569; }
       
-      /* Bordi */
       .dark .border-gray-200 { border-color: #334155; }
       .dark .border-gray-300 { border-color: #475569; }
       .dark .border-gray-100 { border-color: #1e293b; }
@@ -51,17 +46,13 @@ const isHome = Astro.url.pathname === '/';
       .dark .border-b { border-color: #334155; }
       .dark .border-t { border-color: #334155; }
       
-      /* Testi - CORRETTI PER LEGGIBILITÀ */
       .dark .text-gray-900 { color: #f1f5f9; }
       .dark .text-gray-800 { color: #e2e8f0; }
       .dark .text-gray-700 { color: #cbd5e1; }
       .dark .text-gray-600 { color: #94a3b8; }
       .dark .text-gray-500 { color: #94a3b8; }
       .dark .text-gray-400 { color: #64748b; }
-      .dark .text-white { color: #ffffff; }
-      .dark .text-black { color: #e2e8f0; }
       
-      /* Input, Select, Textarea in Dark Mode */
       .dark input,
       .dark select,
       .dark textarea {
@@ -72,9 +63,9 @@ const isHome = Astro.url.pathname === '/';
       .dark input:focus,
       .dark select:focus,
       .dark textarea:focus {
-        border-color: #3b82f6;
+        border-color: #006a4e;
         outline: none;
-        ring: 2px solid #3b82f6;
+        ring: 2px solid #006a4e;
       }
       .dark input::placeholder,
       .dark textarea::placeholder {
@@ -84,12 +75,10 @@ const isHome = Astro.url.pathname === '/';
         color: #e2e8f0;
       }
       
-      /* Ombre in Dark Mode */
       .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5); }
       .dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
       .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5); }
       
-      /* Colori delle card statistiche in Dark Mode */
       .dark .bg-blue-100 { background-color: #1e3a5f; color: #93c5fd; }
       .dark .bg-green-100 { background-color: #14532d; color: #86efac; }
       .dark .bg-yellow-100 { background-color: #78350f; color: #fcd34d; }
@@ -100,82 +89,10 @@ const isHome = Astro.url.pathname === '/';
       .dark .bg-teal-100 { background-color: #134e4a; color: #5eead4; }
       .dark .bg-pink-100 { background-color: #831843; color: #f9a8d4; }
       
-      /* Hover in Dark Mode */
       .dark .hover\:bg-gray-50:hover { background-color: #334155; }
       .dark .hover\:bg-gray-100:hover { background-color: #334155; }
       .dark .hover\:bg-gray-200:hover { background-color: #475569; }
       
-      /* === REGOLE GLOBALI PER IL CONTRASTO === */
-      /* Testo su sfondo scuro */
-      .dark .text-on-dark {
-        color: #f1f5f9;
-      }
-
-      /* Testo su sfondo chiaro (in dark mode) */
-      .dark .text-on-light {
-        color: #1e293b;
-      }
-
-      /* Sfondo scuro con testo chiaro */
-      .dark .bg-dark-with-text {
-        background-color: #1e293b;
-        color: #f1f5f9;
-      }
-
-      /* Sfondo chiaro in dark mode con testo scuro */
-      .dark .bg-light-with-text {
-        background-color: #e2e8f0;
-        color: #0f172a;
-      }
-
-      /* Forza il contrasto per tutti gli elementi di testo */
-      .dark p, 
-      .dark span, 
-      .dark div:not([class*="bg-"]):not([class*="text-"]),
-      .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
-      .dark label,
-      .dark td,
-      .dark th,
-      .dark li {
-        color: #f1f5f9;
-      }
-
-      /* Ma se un elemento ha uno sfondo chiaro, il testo deve essere scuro */
-      .dark .bg-white,
-      .dark .bg-gray-50,
-      .dark .bg-gray-100,
-      .dark .bg-gray-200,
-      .dark .bg-blue-50,
-      .dark .bg-green-50,
-      .dark .bg-yellow-50,
-      .dark .bg-red-50,
-      .dark .bg-purple-50,
-      .dark .bg-indigo-50 {
-        color: #0f172a;
-      }
-
-      .dark .bg-white p,
-      .dark .bg-gray-50 p,
-      .dark .bg-gray-100 p,
-      .dark .bg-gray-200 p,
-      .dark .bg-blue-50 p,
-      .dark .bg-green-50 p,
-      .dark .bg-yellow-50 p,
-      .dark .bg-red-50 p,
-      .dark .bg-purple-50 p,
-      .dark .bg-indigo-50 p,
-      .dark .bg-white span,
-      .dark .bg-gray-50 span,
-      .dark .bg-gray-100 span,
-      .dark .bg-gray-200 span,
-      .dark .bg-white h1, .dark .bg-white h2, .dark .bg-white h3,
-      .dark .bg-gray-50 h1, .dark .bg-gray-50 h2, .dark .bg-gray-50 h3,
-      .dark .bg-gray-100 h1, .dark .bg-gray-100 h2, .dark .bg-gray-100 h3,
-      .dark .bg-gray-200 h1, .dark .bg-gray-200 h2, .dark .bg-gray-200 h3 {
-        color: #0f172a;
-      }
-      
-      /* Animazioni */
       @keyframes bounceIn {
         0% { transform: translateY(100px) scale(0.9); opacity: 0; }
         60% { transform: translateY(-10px) scale(1.02); opacity: 1; }
@@ -201,7 +118,6 @@ const isHome = Astro.url.pathname === '/';
         animation: fadeInUp 0.4s ease-out;
       }
       
-      /* Scrollbar personalizzata */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -221,7 +137,6 @@ const isHome = Astro.url.pathname === '/';
         background: #64748b;
       }
       
-      /* Stampa etichette */
       @media print {
         .no-print { display: none !important; }
         .print-only { display: block !important; }
@@ -229,20 +144,17 @@ const isHome = Astro.url.pathname === '/';
         .dark { background: white !important; color: black !important; }
       }
       
-      /* Mobile friendly */
       @media (max-width: 640px) {
         .container { padding-left: 0.5rem; padding-right: 0.5rem; }
       }
     </style>
     
     <script>
-      // Rileva il tema salvato o le preferenze del sistema
       if (localStorage.getItem('theme') === 'dark' || 
           (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
       }
       
-      // Registra il Service Worker per PWA
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
@@ -259,16 +171,14 @@ const isHome = Astro.url.pathname === '/';
   
   <body>
     <main>
-      <!-- Header con Logo, Dashboard Button e Dark Mode Toggle -->
-      <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-40 no-print">
+      <!-- Header ENAIP - Verde -->
+      <div class="bg-[#006a4e] border-b border-[#005a3e] shadow-sm sticky top-0 z-40 no-print">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
-          <!-- Logo e pulsante Dashboard (nascosto in homepage) -->
           <div class="flex items-center gap-3">
             {!isHome && (
               <a 
                 href="/" 
-                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
-                title="Torna alla Dashboard"
+                class="text-white hover:text-green-200 font-medium text-sm bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
               >
                 <span>←</span> Dashboard
               </a>
@@ -277,23 +187,19 @@ const isHome = Astro.url.pathname === '/';
               src="/images/enaip-logo.png" 
               alt="ENAIP Lombardia" 
               class="h-8 w-auto"
-              onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-lg font-bold text-blue-700 dark:text-blue-400\'>ENAIP</span>';"
+              onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-lg font-bold text-white\'>ENAIP</span>';"
             />
           </div>
-          
-          <!-- Pulsante Tema -->
           <button 
             id="themeToggle"
-            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-            aria-label="Cambia tema (Dark/Light)"
-            title="Cambia tema"
+            class="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
+            aria-label="Cambia tema"
           >
             <span id="themeIcon">🌙</span>
           </button>
         </div>
       </div>
       
-      <!-- Contenuto della pagina -->
       <slot />
     </main>
 
