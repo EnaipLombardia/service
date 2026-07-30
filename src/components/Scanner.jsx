@@ -43,7 +43,6 @@ export default function Scanner({ onDetected, onError }) {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     
-    // 🔁 QUI SIMULIAMO LA LETTURA (poi la sostituiamo con la vera logica)
     const simulatedCode = "ENAIP-TEST-123";
     if (onDetected) {
       onDetected(simulatedCode);
@@ -53,43 +52,36 @@ export default function Scanner({ onDetected, onError }) {
 
   return (
     <div className="scanner-container">
-      {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-3">⚠️ {error}</div>}
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 rounded mb-3">
+          ⚠️ {error}
+        </div>
+      )}
       <div className="relative">
-        <video ref={videoRef} className={`w-full max-w-md rounded-lg border-2 border-gray-300 ${!isScanning ? 'hidden' : ''}`} style={{ transform: 'scaleX(-1)' }} />
+        <video
+          ref={videoRef}
+          className={`w-full max-w-md rounded-lg border-2 border-gray-300 ${!isScanning ? 'hidden' : ''}`}
+          style={{ transform: 'scaleX(-1)' }}
+        />
         {!isScanning && !error && (
-          <div className="text-center p-4 bg-gray-100 rounded-lg">
-            <p className="text-gray-600 mb-3">📷 Fotocamera non attiva</p>
-            <button onClick={startScanner} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <p className="text-gray-600 dark:text-gray-300 mb-3">📷 Fotocamera non attiva</p>
+            <button
+              onClick={startScanner}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
               Avvia scansione
             </button>
           </div>
         )}
         {isScanning && (
           <div className="mt-3 flex gap-2">
-            <button onClick={captureFrame} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex-1">
+            <button
+              onClick={captureFrame}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex-1"
+            >
               📸 Cattura e Riconosci
             </button>
-            <button onClick={stopScanner} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-              Ferma
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="mt-3">
-        <p className="text-sm text-gray-500 mb-1">🔧 Test manuale (inserisci codice):</p>
-        <div className="flex gap-2">
-          <input type="text" id="manualCode" placeholder="Es. ENAIP-0001" className="border rounded px-3 py-1 flex-1" />
-          <button onClick={() => {
-            const input = document.getElementById('manualCode');
-            if (input.value) {
-              onDetected(input.value);
-              input.value = '';
-            }
-          }} className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600">
-            Simula
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+            <button
+              onClick={stopScanner}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg
