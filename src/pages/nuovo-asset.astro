@@ -151,19 +151,15 @@ try {
         </select>
       </div>
 
-      <!-- Assegnato a (campo manuale) -->
+      <!-- Assegnato a (PeoplePicker) -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Assegnato a <span class="text-gray-500 dark:text-gray-400 text-xs">(opzionale)</span>
+          Assegnato a <span class="text-red-500" id="assegnato-required">*</span>
+          <span class="text-gray-500 dark:text-gray-400 text-xs" id="assegnato-optional">(opzionale)</span>
         </label>
-        <input
-          type="text"
-          id="assegnato_a"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-          placeholder="Nome o email del dipendente (es. mario.rossi@enaip.it)"
-        />
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          💡 Inserisci il nome o l'email del dipendente a cui viene assegnato l'asset
+        <div id="people-picker-container"></div>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1" id="assegnato-hint">
+          💡 Se lo stato è "Assegnato", devi selezionare un dipendente
         </p>
       </div>
 
@@ -241,7 +237,63 @@ try {
 
   <script>
     import { supabase } from '../lib/supabaseClient';
+    import PeoplePicker from '../components/PeoplePicker';
+    import { render } from 'react-dom';
+    import React from 'react';
 
+    // Stato per l'utente selezionato
+    let selectedUser = null;
+
+    // Riferimenti agli elementi
+    const statoSelect = document.getElementById('stato');
+    const requiredLabel = document.getElementById('assegnato-required');
+    const optionalLabel = document.getElementById('assegnato-optional');
+    const hintText = document.getElementById('assegnato-hint');
+
+    // Gestisce la visibilità del campo obbligatorio
+    function toggleAssegnatoRequired() {
+      const isAssegnato = statoSelect.value === 'Assegnato';
+      if (requiredLabel) requiredLabel.style.display = isAssegnato ? 'inline' : 'none';
+      if (optionalLabel) optionalLabel.style.display = isAssegnato ? 'none' : 'inline';
+      if (hintText) {
+        hintText.textContent = isAssegnato 
+          ? '⚠️ Campo obbligatorio se lo stato è "Assegnato"' 
+          : '💡 Se lo stato è "Assegnato", devi selezionare un dipendente';
+        hintText.className = isAssegnato 
+          ? 'text-xs text-red-500 dark:text-red-400 mt-1' 
+          : 'text-xs text-gray-400 dark:text-gray-500 mt-1';
+      }
+    }
+
+    // Renderizza il PeoplePicker
+    const container = document.getElementById('people-picker-container');
+    if (container) {
+      render(
+        React.createElement(PeoplePicker, {
+          onSelect: (user) => {
+            selectedUser = user;
+            console.log('👤 Utente selezionato:', user);
+            // Verifica se il campo è obbligatorio
+            if (statoSelect.value === 'Assegnato' && !user) {
+              document.getElementById('messaggio').className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+              document.getElementById('messaggio').textContent = '⚠️ Se lo stato è "Assegnato", devi selezionare un dipendente';
+            } else {
+              document.getElementById('messaggio').className = 'mt-4 hidden';
+            }
+          },
+          selectedEmail: null,
+          disabled: false,
+          required: false
+        }),
+        container
+      );
+    }
+
+    // Event listener per il cambio stato
+    statoSelect.addEventListener('change', toggleAssegnatoRequired);
+    toggleAssegnatoRequired();
+
+    // Funzione per salvare l'asset
     document.getElementById('salvaBtn').addEventListener('click', async function() {
       const form = document.getElementById('assetForm');
       const messaggio = document.getElementById('messaggio');
@@ -259,13 +311,21 @@ try {
         costo_acquisto: document.getElementById('costo_acquisto').value || null,
         scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
         note: document.getElementById('note').value || null,
-        assegnato_a: document.getElementById('assegnato_a').value || null
+        assegnato_a_email: selectedUser?.mail || selectedUser?.userPrincipalName || null,
+        assegnato_a_nome: selectedUser?.displayName || null
       };
 
       // Validazione
       if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
         messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
         messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
+        return;
+      }
+
+      // Validazione: se stato "Assegnato", deve avere un utente
+      if (assetData.stato === 'Assegnato' && !selectedUser) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '⚠️ Se lo stato è "Assegnato", devi selezionare un dipendente';
         return;
       }
 
@@ -278,13 +338,13 @@ try {
         if (error) throw error;
 
         // Se l'asset è stato assegnato, crea un record nella tabella assegnazioni
-        if (data && data[0] && assetData.assegnato_a) {
+        if (data && data[0] && selectedUser) {
           await supabase
             .from('assegnazioni')
             .insert([{
               asset_id: data[0].id,
-              dipendente_nome: assetData.assegnato_a,
-              dipendente_email: assetData.assegnato_a,
+              dipendente_nome: selectedUser.displayName,
+              dipendente_email: selectedUser.mail || selectedUser.userPrincipalName,
               data_inizio: new Date().toISOString().split('T')[0],
               motivo: 'Assegnazione iniziale'
             }]);
@@ -297,6 +357,24 @@ try {
         document.getElementById('codice_univoco').value = '';
         document.getElementById('stato').value = 'In Magazzino';
         document.getElementById('numero_serie').focus();
+
+        // Resetta il PeoplePicker
+        selectedUser = null;
+        // Ricarica il PeoplePicker per resettarlo
+        if (container) {
+          render(
+            React.createElement(PeoplePicker, {
+              onSelect: (user) => {
+                selectedUser = user;
+              },
+              selectedEmail: null,
+              disabled: false,
+              required: false
+            }),
+            container
+          );
+        }
+        toggleAssegnatoRequired();
 
         // Aggiorna il prossimo codice disponibile
         try {
