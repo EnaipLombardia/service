@@ -2,17 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// Ottieni tutti gli asset
 const { data: assets } = await supabase
   .from('asset')
   .select('*');
 
-// Ottieni tutte le assegnazioni
 const { data: assignments } = await supabase
   .from('assegnazioni')
   .select('*');
 
-// Calcola statistiche
 const totalAssets = assets?.length || 0;
 const byType = {};
 const bySede = {};
@@ -25,12 +22,10 @@ assets?.forEach(asset => {
   byStato[asset.stato] = (byStato[asset.stato] || 0) + 1;
 });
 
-// Ordina per valore decrescente
 const sortedByType = Object.entries(byType).sort((a, b) => b[1] - a[1]);
 const sortedBySede = Object.entries(bySede).sort((a, b) => b[1] - a[1]);
 const sortedByStato = Object.entries(byStato).sort((a, b) => b[1] - a[1]);
 
-// Calcola la percentuale per la barra
 function getPercentage(value, total) {
   return total > 0 ? Math.round((value / total) * 100) : 0;
 }
@@ -38,44 +33,43 @@ function getPercentage(value, total) {
 
 <Layout title="Statistiche Asset">
   <div class="p-4 max-w-6xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">📊 Statistiche Asset</h1>
+    <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c] mb-4">📊 Statistiche Asset</h1>
     
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-blue-100 p-4 rounded-lg text-center">
-        <div class="text-3xl font-bold">{totalAssets}</div>
-        <div class="text-sm">Totale Asset</div>
+      <div class="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
+        <div class="text-3xl font-bold text-blue-700 dark:text-blue-300">{totalAssets}</div>
+        <div class="text-sm text-blue-600 dark:text-blue-400">Totale Asset</div>
       </div>
-      <div class="bg-green-100 p-4 rounded-lg text-center">
-        <div class="text-3xl font-bold">{assignmentsCount}</div>
-        <div class="text-sm">Assegnazioni totali</div>
+      <div class="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
+        <div class="text-3xl font-bold text-green-700 dark:text-green-300">{assignmentsCount}</div>
+        <div class="text-sm text-green-600 dark:text-green-400">Assegnazioni totali</div>
       </div>
-      <div class="bg-yellow-100 p-4 rounded-lg text-center">
-        <div class="text-3xl font-bold">{Object.keys(bySede).length}</div>
-        <div class="text-sm">Sedi coinvolte</div>
+      <div class="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
+        <div class="text-3xl font-bold text-yellow-700 dark:text-yellow-300">{Object.keys(bySede).length}</div>
+        <div class="text-sm text-yellow-600 dark:text-yellow-400">Sedi coinvolte</div>
       </div>
-      <div class="bg-purple-100 p-4 rounded-lg text-center">
-        <div class="text-3xl font-bold">{Object.keys(byType).length}</div>
-        <div class="text-sm">Tipologie di asset</div>
+      <div class="bg-purple-100 dark:bg-purple-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
+        <div class="text-3xl font-bold text-purple-700 dark:text-purple-300">{Object.keys(byType).length}</div>
+        <div class="text-sm text-purple-600 dark:text-purple-400">Tipologie di asset</div>
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Per Tipo -->
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold mb-4">📌 Per Tipo</h2>
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📌 Per Tipo</h2>
         {sortedByType.length === 0 ? (
-          <p class="text-gray-500">Nessun dato disponibile</p>
+          <p class="text-gray-500 dark:text-gray-400">Nessun dato disponibile</p>
         ) : (
           <div class="space-y-2">
             {sortedByType.map(([type, count]) => (
               <div key={type}>
                 <div class="flex justify-between text-sm">
-                  <span>{type}</span>
-                  <span>{count} ({getPercentage(count, totalAssets)}%)</span>
+                  <span class="text-gray-700 dark:text-gray-300">{type}</span>
+                  <span class="text-gray-700 dark:text-gray-300">{count} ({getPercentage(count, totalAssets)}%)</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div 
-                    class="bg-blue-500 h-2 rounded-full" 
+                    class="bg-[#006a4e] h-2 rounded-full" 
                     style={{ width: `${getPercentage(count, totalAssets)}%` }}
                   ></div>
                 </div>
@@ -85,11 +79,10 @@ function getPercentage(value, total) {
         )}
       </div>
 
-      <!-- Per Stato -->
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold mb-4">📌 Per Stato</h2>
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📌 Per Stato</h2>
         {sortedByStato.length === 0 ? (
-          <p class="text-gray-500">Nessun dato disponibile</p>
+          <p class="text-gray-500 dark:text-gray-400">Nessun dato disponibile</p>
         ) : (
           <div class="space-y-2">
             {sortedByStato.map(([stato, count]) => {
@@ -102,10 +95,10 @@ function getPercentage(value, total) {
               return (
                 <div key={stato}>
                   <div class="flex justify-between text-sm">
-                    <span>{stato}</span>
-                    <span>{count} ({getPercentage(count, totalAssets)}%)</span>
+                    <span class="text-gray-700 dark:text-gray-300">{stato}</span>
+                    <span class="text-gray-700 dark:text-gray-300">{count} ({getPercentage(count, totalAssets)}%)</span>
                   </div>
-                  <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
                       class={`${color} h-2 rounded-full`} 
                       style={{ width: `${getPercentage(count, totalAssets)}%` }}
@@ -118,22 +111,21 @@ function getPercentage(value, total) {
         )}
       </div>
 
-      <!-- Per Sede -->
-      <div class="bg-white shadow rounded-lg p-6 md:col-span-2">
-        <h2 class="text-lg font-semibold mb-4">📍 Per Sede</h2>
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 md:col-span-2">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📍 Per Sede</h2>
         {sortedBySede.length === 0 ? (
-          <p class="text-gray-500">Nessun dato disponibile</p>
+          <p class="text-gray-500 dark:text-gray-400">Nessun dato disponibile</p>
         ) : (
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sortedBySede.map(([sede, count]) => (
               <div key={sede}>
                 <div class="flex justify-between text-sm">
-                  <span>{sede}</span>
-                  <span>{count} ({getPercentage(count, totalAssets)}%)</span>
+                  <span class="text-gray-700 dark:text-gray-300">{sede}</span>
+                  <span class="text-gray-700 dark:text-gray-300">{count} ({getPercentage(count, totalAssets)}%)</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div 
-                    class="bg-purple-500 h-2 rounded-full" 
+                    class="bg-[#8b5a2b] h-2 rounded-full" 
                     style={{ width: `${getPercentage(count, totalAssets)}%` }}
                   ></div>
                 </div>
@@ -145,7 +137,9 @@ function getPercentage(value, total) {
     </div>
 
     <div class="mt-6">
-      <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      <a href="/" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors inline-block">
+        ← Torna alla dashboard
+      </a>
     </div>
   </div>
 </Layout>
