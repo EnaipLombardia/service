@@ -33,6 +33,7 @@ const isHome = Astro.url.pathname === '/';
       .dark {
         background-color: #0f172a;
         color: #f1f5f9;
+        color-scheme: dark;
       }
       
       /* Sfondo contenitori */
@@ -103,6 +104,76 @@ const isHome = Astro.url.pathname === '/';
       .dark .hover\:bg-gray-50:hover { background-color: #334155; }
       .dark .hover\:bg-gray-100:hover { background-color: #334155; }
       .dark .hover\:bg-gray-200:hover { background-color: #475569; }
+      
+      /* === REGOLE GLOBALI PER IL CONTRASTO === */
+      /* Testo su sfondo scuro */
+      .dark .text-on-dark {
+        color: #f1f5f9;
+      }
+
+      /* Testo su sfondo chiaro (in dark mode) */
+      .dark .text-on-light {
+        color: #1e293b;
+      }
+
+      /* Sfondo scuro con testo chiaro */
+      .dark .bg-dark-with-text {
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+
+      /* Sfondo chiaro in dark mode con testo scuro */
+      .dark .bg-light-with-text {
+        background-color: #e2e8f0;
+        color: #0f172a;
+      }
+
+      /* Forza il contrasto per tutti gli elementi di testo */
+      .dark p, 
+      .dark span, 
+      .dark div:not([class*="bg-"]):not([class*="text-"]),
+      .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
+      .dark label,
+      .dark td,
+      .dark th,
+      .dark li {
+        color: #f1f5f9;
+      }
+
+      /* Ma se un elemento ha uno sfondo chiaro, il testo deve essere scuro */
+      .dark .bg-white,
+      .dark .bg-gray-50,
+      .dark .bg-gray-100,
+      .dark .bg-gray-200,
+      .dark .bg-blue-50,
+      .dark .bg-green-50,
+      .dark .bg-yellow-50,
+      .dark .bg-red-50,
+      .dark .bg-purple-50,
+      .dark .bg-indigo-50 {
+        color: #0f172a;
+      }
+
+      .dark .bg-white p,
+      .dark .bg-gray-50 p,
+      .dark .bg-gray-100 p,
+      .dark .bg-gray-200 p,
+      .dark .bg-blue-50 p,
+      .dark .bg-green-50 p,
+      .dark .bg-yellow-50 p,
+      .dark .bg-red-50 p,
+      .dark .bg-purple-50 p,
+      .dark .bg-indigo-50 p,
+      .dark .bg-white span,
+      .dark .bg-gray-50 span,
+      .dark .bg-gray-100 span,
+      .dark .bg-gray-200 span,
+      .dark .bg-white h1, .dark .bg-white h2, .dark .bg-white h3,
+      .dark .bg-gray-50 h1, .dark .bg-gray-50 h2, .dark .bg-gray-50 h3,
+      .dark .bg-gray-100 h1, .dark .bg-gray-100 h2, .dark .bg-gray-100 h3,
+      .dark .bg-gray-200 h1, .dark .bg-gray-200 h2, .dark .bg-gray-200 h3 {
+        color: #0f172a;
+      }
       
       /* Animazioni */
       @keyframes bounceIn {
