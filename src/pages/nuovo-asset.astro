@@ -6,9 +6,7 @@ import { getNextAvailableCode } from '../lib/assetFunctions';
 let nextCode = '';
 try {
   nextCode = await getNextAvailableCode();
-} catch (e) {
-  // Se non ci sono codici disponibili, non importa
-}
+} catch (e) {}
 ---
 
 <Layout title="Nuovo Asset">
@@ -35,7 +33,7 @@ try {
         )}
       </div>
 
-      <!-- Numero di Serie (obbligatorio) -->
+      <!-- Numero di Serie -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Numero di Serie <span class="text-red-500">*</span>
