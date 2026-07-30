@@ -153,6 +153,17 @@ try {
         </select>
       </div>
 
+      <!-- Assegnato a (con PeoplePicker) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Assegnato a <span class="text-gray-500 dark:text-gray-400 text-xs">(opzionale)</span>
+        </label>
+        <div id="people-picker-container"></div>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+          💡 Inizia a digitare il nome o l'email del dipendente
+        </p>
+      </div>
+
       <!-- Data Acquisto -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -227,7 +238,30 @@ try {
 
   <script>
     import { supabase } from '../lib/supabaseClient';
+    import PeoplePicker from '../components/PeoplePicker';
+    import { render } from 'react-dom';
+    import React from 'react';
 
+    // Stato per l'utente selezionato
+    let selectedUser = null;
+
+    // Renderizza il PeoplePicker
+    const container = document.getElementById('people-picker-container');
+    if (container) {
+      render(
+        React.createElement(PeoplePicker, {
+          onSelect: (user) => {
+            selectedUser = user;
+            console.log('👤 Utente selezionato:', user);
+          },
+          selectedEmail: null,
+          disabled: false
+        }),
+        container
+      );
+    }
+
+    // Funzione per salvare l'asset
     document.getElementById('salvaBtn').addEventListener('click', async function() {
       const form = document.getElementById('assetForm');
       const messaggio = document.getElementById('messaggio');
@@ -244,7 +278,10 @@ try {
         data_acquisto: document.getElementById('data_acquisto').value || null,
         costo_acquisto: document.getElementById('costo_acquisto').value || null,
         scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
-        note: document.getElementById('note').value || null
+        note: document.getElementById('note').value || null,
+        // Aggiungi i campi dell'utente selezionato
+        assegnato_a_email: selectedUser?.mail || selectedUser?.userPrincipalName || null,
+        assegnato_a_nome: selectedUser?.displayName || null
       };
 
       // Validazione
