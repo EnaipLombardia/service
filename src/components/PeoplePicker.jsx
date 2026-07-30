@@ -7,10 +7,11 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled }) {
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Inizializza il client Graph
+  // Inizializza il client Graph (per ora con token fittizio)
   const getGraphClient = () => {
-    // Assicurati di avere il token di accesso (dovrai implementare il login)
-    const accessToken = localStorage.getItem('graphAccessToken');
+    // ⚠️ PER ORA USIAMO UN TOKEN FITTIZIO PER TEST
+    // Dopo implementeremo il login con Azure AD
+    const accessToken = localStorage.getItem('graphAccessToken') || 'TOKEN_FITTIZIO';
     return Client.init({
       authProvider: (done) => {
         done(null, accessToken);
@@ -37,6 +38,15 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled }) {
       setUsers(response.value);
     } catch (error) {
       console.error('Errore ricerca utenti:', error);
+      // Se il token non è valido, mostriamo un messaggio
+      if (error.message.includes('accessToken')) {
+        setUsers([{ 
+          id: 'test', 
+          displayName: '🔑 Login richiesto',
+          mail: 'Clicca per autenticarti con Microsoft',
+          userPrincipalName: 'test@enaip.it'
+        }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -49,25 +59,12 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled }) {
     if (onSelect) onSelect(user);
   };
 
-  useEffect(() => {
-    if (selectedEmail) {
-      // Carica l'utente selezionato
-      const loadUser = async () => {
-        try {
-          const client = getGraphClient();
-          const response = await client
-            .api(`/users/${selectedEmail}`)
-            .select('id,displayName,mail,userPrincipalName')
-            .get();
-          setSelectedUser(response);
-          setSearchTerm(response.displayName);
-        } catch (error) {
-          console.error('Errore caricamento utente:', error);
-        }
-      };
-      loadUser();
-    }
-  }, [selectedEmail]);
+  // Se il token manca, mostriamo un pulsante per il login
+  const handleLogin = () => {
+    // ⚠️ QUI METTEREMO IL LOGIN CON MSAL
+    // Per ora, un alert per test
+    alert('🔐 Funzionalità di login Microsoft in sviluppo.\nPer ora puoi inserire manualmente il nome del dipendente.');
+  };
 
   return (
     <div className="relative">
@@ -76,7 +73,11 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled }) {
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);
-          searchUsers(e.target.value);
+          if (e.target.value.length >= 2) {
+            searchUsers(e.target.value);
+          } else {
+            setUsers([]);
+          }
         }}
         placeholder="Cerca un dipendente per nome o email..."
         className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -104,6 +105,15 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled }) {
               )}
             </li>
           ))}
+          {/* Pulsante per il login se il token non è valido */}
+          {users.length === 1 && users[0].id === 'test' && (
+            <li
+              className="p-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors text-blue-600 dark:text-blue-400"
+              onClick={handleLogin}
+            >
+              🔑 Clicca per autenticarti con Microsoft
+            </li>
+          )}
         </ul>
       )}
 
