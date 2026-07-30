@@ -3,6 +3,12 @@ import { supabase } from '../lib/supabaseClient';
 export default function ExportButton() {
   const handleExport = async () => {
     try {
+      // Mostra un feedback all'utente
+      const loading = document.createElement('div');
+      loading.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      loading.innerHTML = '<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"><p class="text-gray-900 dark:text-white">⏳ Esportazione in corso...</p></div>';
+      document.body.appendChild(loading);
+
       const { data, error } = await supabase
         .from('asset')
         .select('*');
@@ -11,6 +17,7 @@ export default function ExportButton() {
 
       if (!data || data.length === 0) {
         alert('📭 Nessun asset da esportare');
+        document.body.removeChild(loading);
         return;
       }
 
@@ -42,6 +49,9 @@ export default function ExportButton() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
+      document.body.removeChild(loading);
+      alert('✅ Esportazione completata con successo!');
+
     } catch (error) {
       console.error('Errore export:', error);
       alert('❌ Errore durante l\'esportazione');
@@ -51,7 +61,7 @@ export default function ExportButton() {
   return (
     <button
       onClick={handleExport}
-      className="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 transition-colors text-sm"
+      className="bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded text-sm transition-colors"
     >
       📥 Esporta CSV
     </button>
