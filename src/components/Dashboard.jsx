@@ -283,7 +283,7 @@ export default function Dashboard() {
                 setSearchTerm('');
                 setSearchResults([]);
               }}
-              className="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+              className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
             >
               Cancella
             </button>
