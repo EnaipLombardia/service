@@ -32,7 +32,7 @@ const { data: noWarranty } = await supabase
 
 <Layout title="Scadenze Garanzie">
   <div class="p-4 max-w-6xl mx-auto">
-    <h1 class="text-2xl font-bold dark:text-white mb-4">🔔 Scadenze Garanzie</h1>
+    <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c] mb-4">🔔 Scadenze Garanzie</h1>
     <p class="text-gray-600 dark:text-gray-400 mb-4">Monitoraggio delle garanzie in scadenza e scadute</p>
 
     <div class="mb-6">
@@ -49,7 +49,7 @@ const { data: noWarranty } = await supabase
           {expiring.map(asset => (
             <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div>
-                <span class="font-medium dark:text-white">{asset.marca} {asset.modello}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{asset.marca} {asset.modello}</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
               </div>
@@ -57,7 +57,7 @@ const { data: noWarranty } = await supabase
                 <span class="text-sm text-yellow-600 dark:text-yellow-400 font-medium">
                   Scade il {new Date(asset.scadenza_garanzia).toLocaleDateString('it-IT')}
                 </span>
-                <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline text-sm">Dettaglio</a>
+                <a href={`/asset/${asset.id}`} class="text-[#006a4e] dark:text-[#4a9a7e] hover:underline text-sm">Dettaglio</a>
               </div>
             </li>
           ))}
@@ -81,7 +81,7 @@ const { data: noWarranty } = await supabase
           {expired.map(asset => (
             <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div>
-                <span class="font-medium dark:text-white">{asset.marca} {asset.modello}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{asset.marca} {asset.modello}</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
               </div>
@@ -89,7 +89,7 @@ const { data: noWarranty } = await supabase
                 <span class="text-sm text-red-600 dark:text-red-400 font-medium">
                   Scaduta il {new Date(asset.scadenza_garanzia).toLocaleDateString('it-IT')}
                 </span>
-                <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline text-sm">Dettaglio</a>
+                <a href={`/asset/${asset.id}`} class="text-[#006a4e] dark:text-[#4a9a7e] hover:underline text-sm">Dettaglio</a>
               </div>
             </li>
           ))}
@@ -113,13 +113,13 @@ const { data: noWarranty } = await supabase
           {noWarranty.map(asset => (
             <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div>
-                <span class="font-medium dark:text-white">{asset.marca} {asset.modello}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{asset.marca} {asset.modello}</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
               </div>
               <div class="flex items-center gap-3">
                 <span class="text-sm text-gray-500 dark:text-gray-400">Nessuna data inserita</span>
-                <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline text-sm">Dettaglio</a>
+                <a href={`/asset/${asset.id}`} class="text-[#006a4e] dark:text-[#4a9a7e] hover:underline text-sm">Dettaglio</a>
               </div>
             </li>
           ))}
@@ -130,7 +130,9 @@ const { data: noWarranty } = await supabase
     </div>
 
     <div class="mt-4">
-      <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      <a href="/" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors inline-block">
+        ← Torna alla dashboard
+      </a>
     </div>
   </div>
 </Layout>
