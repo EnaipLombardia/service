@@ -1,70 +1,269 @@
-<script>
-  import { supabase } from '../lib/supabaseClient';
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+import { getNextAvailableCode } from '../lib/assetFunctions';
 
-  document.getElementById('salvaBtn').addEventListener('click', async function() {
-    const form = document.getElementById('assetForm');
-    const messaggio = document.getElementById('messaggio');
+let nextCode = '';
+try {
+  nextCode = await getNextAvailableCode();
+} catch (e) {
+  // Se non ci sono codici disponibili, non importa
+}
+---
 
-    const assetData = {
-      codice_univoco: document.getElementById('codice_univoco').value || null,
-      numero_serie: document.getElementById('numero_serie').value,
-      tipo_asset: document.getElementById('tipo_asset').value,
-      marca: document.getElementById('marca').value,
-      modello: document.getElementById('modello').value,
-      sede: document.getElementById('sede').value,
-      stanza_ufficio: document.getElementById('stanza_ufficio').value || null,
-      stato: document.getElementById('stato').value,
-      data_acquisto: document.getElementById('data_acquisto').value || null,
-      costo_acquisto: document.getElementById('costo_acquisto').value || null,
-      scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
-      note: document.getElementById('note').value || null
-    };
+<Layout title="Nuovo Asset">
+  <div class="p-4 max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">➕ Nuovo Asset</h1>
 
-    // Validazione
-    if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
-      messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-      messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
-      return;
-    }
+    <form id="assetForm" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
 
-    try {
-      const { data, error } = await supabase
-        .from('asset')
-        .insert([assetData])
-        .select();
+      <!-- Codice Univoco (opzionale) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Codice Univoco <span class="text-gray-500 dark:text-gray-400">(opzionale)</span>
+        </label>
+        <input
+          type="text"
+          id="codice_univoco"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. ENAIP-0001"
+        />
+        {nextCode && (
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            🔖 Prossimo codice disponibile: <strong class="text-gray-700 dark:text-gray-300">{nextCode}</strong>
+          </p>
+        )}
+      </div>
 
-      if (error) throw error;
+      <!-- Numero di Serie -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Numero di Serie <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="numero_serie"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. ABC123XYZ789"
+          required
+        />
+      </div>
 
-      messaggio.className = 'mt-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
-      messaggio.textContent = `✅ Asset "${assetData.marca} ${assetData.modello}" salvato con successo!`;
+      <!-- Tipo Asset -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Tipo Asset <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="tipo_asset"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
+          <option value="">Seleziona...</option>
+          <option value="Laptop">Laptop</option>
+          <option value="PCTower">PC Tower</option>
+          <option value="Monitor">Monitor</option>
+          <option value="Mouse">Mouse</option>
+          <option value="Tastiera">Tastiera</option>
+          <option value="Cellulare">Cellulare</option>
+          <option value="Schermo">Schermo</option>
+          <option value="Altro">Altro</option>
+        </select>
+      </div>
 
-      form.reset();
-      document.getElementById('codice_univoco').value = '';
-      document.getElementById('stato').value = 'In Magazzino';
-      document.getElementById('numero_serie').focus();
+      <!-- Marca -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Marca <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="marca"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. Dell, HP, Apple"
+          required
+        />
+      </div>
 
-      // Aggiorna il prossimo codice disponibile
-      try {
-        const { data: newCode } = await supabase
-          .from('etichette_disponibili')
-          .select('codice_univoco')
-          .eq('usato', false)
-          .order('codice_univoco', { ascending: true })
-          .limit(1)
-          .single();
+      <!-- Modello -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Modello <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="modello"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. Latitude 5520"
+          required
+        />
+      </div>
 
-        if (newCode) {
-          const nextLabel = document.querySelector('.text-sm.text-gray-500 strong');
-          if (nextLabel) nextLabel.textContent = newCode.codice_univoco;
-        }
-      } catch (e) {
-        // Se non ci sono codici disponibili, ignora
+      <!-- Sede -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Sede <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="sede"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
+          <option value="">Seleziona...</option>
+          <option value="Milano">Milano</option>
+          <option value="Bergamo">Bergamo</option>
+          <option value="Brescia">Brescia</option>
+          <option value="Como">Como</option>
+          <option value="Lecco">Lecco</option>
+          <option value="Varese">Varese</option>
+          <option value="Sondrio">Sondrio</option>
+          <option value="Lodi">Lodi</option>
+          <option value="Cremona">Cremona</option>
+          <option value="Mantova">Mantova</option>
+        </select>
+      </div>
+
+      <!-- Stanza/Ufficio -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Stanza/Ufficio
+        </label>
+        <input
+          type="text"
+          id="stanza_ufficio"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. Piano 3 - Stanza 204"
+        />
+      </div>
+
+      <!-- Stato -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Stato <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="stato"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
+          <option value="In Magazzino">In Magazzino</option>
+          <option value="Assegnato">Assegnato</option>
+          <option value="In Manutenzione">In Manutenzione</option>
+          <option value="Dismesso">Dismesso</option>
+        </select>
+      </div>
+
+      <!-- Data Acquisto -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Data Acquisto
+        </label>
+        <input
+          type="date"
+          id="data_acquisto"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        />
+      </div>
+
+      <!-- Costo -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Costo Acquisto (€)
+        </label>
+        <input
+          type="number"
+          id="costo_acquisto"
+          step="0.01"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="0.00"
+        />
+      </div>
+
+      <!-- Scadenza Garanzia -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Scadenza Garanzia
+        </label>
+        <input
+          type="date"
+          id="scadenza_garanzia"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+        />
+      </div>
+
+      <!-- Note -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Note
+        </label>
+        <textarea
+          id="note"
+          rows="3"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Eventuali note sull'asset..."
+        ></textarea>
+      </div>
+
+      <!-- Pulsanti -->
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          id="salvaBtn"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+        >
+          💾 Salva Asset
+        </button>
+        <a
+          href="/"
+          class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
+        >
+          Annulla
+        </a>
+      </div>
+
+      <div id="messaggio" class="mt-4 hidden"></div>
+    </form>
+  </div>
+
+  <script>
+    import { supabase } from '../lib/supabaseClient';
+
+    document.getElementById('salvaBtn').addEventListener('click', async function() {
+      const form = document.getElementById('assetForm');
+      const messaggio = document.getElementById('messaggio');
+
+      const assetData = {
+        codice_univoco: document.getElementById('codice_univoco').value || null,
+        numero_serie: document.getElementById('numero_serie').value,
+        tipo_asset: document.getElementById('tipo_asset').value,
+        marca: document.getElementById('marca').value,
+        modello: document.getElementById('modello').value,
+        sede: document.getElementById('sede').value,
+        stanza_ufficio: document.getElementById('stanza_ufficio').value || null,
+        stato: document.getElementById('stato').value,
+        data_acquisto: document.getElementById('data_acquisto').value || null,
+        costo_acquisto: document.getElementById('costo_acquisto').value || null,
+        scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
+        note: document.getElementById('note').value || null
+      };
+
+      // Validazione
+      if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
+        return;
       }
 
-    } catch (error) {
-      console.error('Errore:', error);
-      messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-      messaggio.textContent = `❌ Errore: ${error.message}`;
-    }
-  });
-</script>
+      try {
+        const { data, error } = await supabase
+          .from('asset')
+          .insert([assetData])
+          .select();
+
+        if (error) throw error;
+
+        messaggio.className = 'mt-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
+        messaggio.textContent = `✅ Asset "${assetData.marca} ${assetData.modello}" salvato con successo!`;
+
+        form.reset();
+       
