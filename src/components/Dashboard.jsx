@@ -172,7 +172,7 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h1 className="text-2xl font-bold dark:text-white">📦 Asset ENAIP Lombardia</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">📦 Asset ENAIP Lombardia</h1>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowScanner(!showScanner)}
@@ -206,7 +206,7 @@ export default function Dashboard() {
       
       {showScanner && (
         <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold dark:text-white mb-2">🔍 Scansiona un asset</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">🔍 Scansiona un asset</h2>
           <Scanner onDetected={handleScan} />
           
           {scannedCode && !scannedAsset && (
@@ -268,7 +268,7 @@ export default function Dashboard() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="🔍 Cerca per seriale, marca, modello, tipo o codice..."
-            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           />
           <button 
             type="submit"
@@ -292,7 +292,7 @@ export default function Dashboard() {
 
         {searchResults.length > 0 && (
           <div className="mt-3 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-white">
+            <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
               Risultati della ricerca ({searchResults.length})
             </h3>
             <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
@@ -304,7 +304,7 @@ export default function Dashboard() {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="font-semibold dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                       <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
                       <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
                     </div>
@@ -363,48 +363,48 @@ export default function Dashboard() {
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block transition-colors"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           ➕ Nuovo Asset
         </a>
         <a
           href="/censimento"
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 inline-block transition-colors"
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           📋 Censimento Rapido
         </a>
         <a
           href="/statistiche"
-          className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 inline-block transition-colors"
+          className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           📊 Statistiche
         </a>
         <a
           href="/storico"
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 inline-block transition-colors"
+          className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           📜 Storico Generale
         </a>
         <a
           href="/admin"
-          className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 inline-block transition-colors"
+          className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           📊 Admin
         </a>
         <a
           href="/audit"
-          className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 inline-block transition-colors"
+          className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           📜 Audit
         </a>
         <a
           href="/scadenze"
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 inline-block transition-colors"
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded inline-block transition-colors"
         >
           🔔 Scadenze
         </a>
         {nextCode && (
-          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center dark:text-white">
+          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-700 dark:text-gray-300">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
           </span>
         )}
@@ -412,7 +412,7 @@ export default function Dashboard() {
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold dark:text-white">📋 Ultimi asset inseriti</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {recentAssets.length > 0 && `Mostrando ${recentAssets.length} asset`}
           </span>
@@ -445,7 +445,7 @@ export default function Dashboard() {
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
-                    <span className="font-semibold dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                     <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
                     <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
                   </div>
@@ -453,28 +453,4 @@ export default function Dashboard() {
                     <span className={`px-2 py-1 rounded text-sm ${
                       asset.stato === 'Assegnato' ? 'bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-300' :
                       asset.stato === 'In Magazzino' ? 'bg-yellow-200 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' :
-                      asset.stato === 'In Manutenzione' ? 'bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300' :
-                      'bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-300'
-                    }`}>
-                      {asset.stato}
-                    </span>
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">
-                      {new Date(asset.created_at).toLocaleDateString('it-IT')}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
-        <p>ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
-        <p className="text-xs mt-1">
-          {notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}
-        </p>
-      </div>
-    </div>
-  );
-}
+                      asset.stato === 'In Manutenzione' ? 'bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300'
