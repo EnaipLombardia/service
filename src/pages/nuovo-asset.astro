@@ -1,9 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getNextAvailableCode } from '../lib/assetFunctions';
 import { supabase } from '../lib/supabaseClient';
+import { getNextAvailableCode } from '../lib/assetFunctions';
 
-// Ottieni il prossimo codice disponibile (se vuoi mostrarlo)
 let nextCode = '';
 try {
   nextCode = await getNextAvailableCode();
@@ -14,46 +13,37 @@ try {
 
 <Layout title="Nuovo Asset">
   <div class="p-4 max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">➕ Nuovo Asset</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">➕ Nuovo Asset</h1>
 
-  <!-- AGGIUNGI QUI: OCR Scanner (toggle) -->
-    <div x-data="{ showOcr: false }" class="mb-4">
-      <button 
-        @click="showOcr = !showOcr"
-        class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 inline-block"
-      >
-        📷 Leggi seriale da targhetta (OCR)
-      </button>
-      
-      <div x-show="showOcr" class="mt-3">
-        <div id="ocr-container">
-          <!-- Qui verrà montato il componente React -->
-        </div>
-      </div>
-    </div>
-    
-    <form id="assetForm" class="bg-white shadow rounded-lg p-6">
-      <!-- Campo Codice Univoco (opzionale) -->
+    <form id="assetForm" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+
+      <!-- Codice Univoco (opzionale) -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Codice Univoco (opzionale)</label>
-        <input 
-          type="text" 
-          id="codice_univoco" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Codice Univoco <span class="text-gray-500 dark:text-gray-400">(opzionale)</span>
+        </label>
+        <input
+          type="text"
+          id="codice_univoco"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="Es. ENAIP-0001"
         />
         {nextCode && (
-          <p class="text-sm text-gray-500 mt-1">Prossimo codice disponibile: <strong>{nextCode}</strong></p>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            🔖 Prossimo codice disponibile: <strong class="text-gray-700 dark:text-gray-300">{nextCode}</strong>
+          </p>
         )}
       </div>
 
-      <!-- Numero di Serie (OBBLIGATORIO) -->
+      <!-- Numero di Serie (obbligatorio) -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Numero di Serie *</label>
-        <input 
-          type="text" 
-          id="numero_serie" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Numero di Serie <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="numero_serie"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="Es. ABC123XYZ789"
           required
         />
@@ -61,8 +51,14 @@ try {
 
       <!-- Tipo Asset -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Tipo Asset *</label>
-        <select id="tipo_asset" class="w-full border rounded px-3 py-2" required>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Tipo Asset <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="tipo_asset"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
           <option value="">Seleziona...</option>
           <option value="Laptop">Laptop</option>
           <option value="PCTower">PC Tower</option>
@@ -77,11 +73,13 @@ try {
 
       <!-- Marca -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Marca *</label>
-        <input 
-          type="text" 
-          id="marca" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Marca <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="marca"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="Es. Dell, HP, Apple"
           required
         />
@@ -89,11 +87,13 @@ try {
 
       <!-- Modello -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Modello *</label>
-        <input 
-          type="text" 
-          id="modello" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Modello <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="modello"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="Es. Latitude 5520"
           required
         />
@@ -101,8 +101,14 @@ try {
 
       <!-- Sede -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Sede *</label>
-        <select id="sede" class="w-full border rounded px-3 py-2" required>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Sede <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="sede"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
           <option value="">Seleziona...</option>
           <option value="Milano">Milano</option>
           <option value="Bergamo">Bergamo</option>
@@ -119,19 +125,27 @@ try {
 
       <!-- Stanza/Ufficio -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Stanza/Ufficio</label>
-        <input 
-          type="text" 
-          id="stanza_ufficio" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Stanza/Ufficio
+        </label>
+        <input
+          type="text"
+          id="stanza_ufficio"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="Es. Piano 3 - Stanza 204"
         />
       </div>
 
       <!-- Stato -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Stato *</label>
-        <select id="stato" class="w-full border rounded px-3 py-2" required>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Stato <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="stato"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
           <option value="In Magazzino">In Magazzino</option>
           <option value="Assegnato">Assegnato</option>
           <option value="In Manutenzione">In Manutenzione</option>
@@ -141,55 +155,70 @@ try {
 
       <!-- Data Acquisto -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Data Acquisto</label>
-        <input 
-          type="date" 
-          id="data_acquisto" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Data Acquisto
+        </label>
+        <input
+          type="date"
+          id="data_acquisto"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
 
       <!-- Costo -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Costo Acquisto (€)</label>
-        <input 
-          type="number" 
-          id="costo_acquisto" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Costo Acquisto (€)
+        </label>
+        <input
+          type="number"
+          id="costo_acquisto"
           step="0.01"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="0.00"
         />
       </div>
 
       <!-- Scadenza Garanzia -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Scadenza Garanzia</label>
-        <input 
-          type="date" 
-          id="scadenza_garanzia" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Scadenza Garanzia
+        </label>
+        <input
+          type="date"
+          id="scadenza_garanzia"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
 
       <!-- Note -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-1">Note</label>
-        <textarea 
-          id="note" 
-          class="w-full border rounded px-3 py-2"
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Note
+        </label>
+        <textarea
+          id="note"
           rows="3"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           placeholder="Eventuali note sull'asset..."
         ></textarea>
       </div>
 
-      <div class="flex gap-2">
-        <button 
+      <!-- Pulsanti -->
+      <div class="flex flex-wrap gap-2">
+        <button
           type="button"
           id="salvaBtn"
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
         >
           💾 Salva Asset
         </button>
+        <a
+          href="/"
+          class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
+        >
+          Annulla
+        </a>
       </div>
 
       <div id="messaggio" class="mt-4 hidden"></div>
@@ -200,8 +229,7 @@ try {
     document.getElementById('salvaBtn').addEventListener('click', async function() {
       const form = document.getElementById('assetForm');
       const messaggio = document.getElementById('messaggio');
-      
-      // Raccogli i dati
+
       const assetData = {
         codice_univoco: document.getElementById('codice_univoco').value || null,
         numero_serie: document.getElementById('numero_serie').value,
@@ -217,9 +245,9 @@ try {
         note: document.getElementById('note').value || null
       };
 
-      // Validazione base
+      // Validazione
       if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
-        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
         messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
         return;
       }
@@ -232,17 +260,31 @@ try {
 
         if (error) throw error;
 
-        messaggio.className = 'mt-4 p-3 bg-green-100 text-green-700 rounded';
+        messaggio.className = 'mt-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
         messaggio.textContent = `✅ Asset "${assetData.marca} ${assetData.modello}" salvato con successo!`;
-        
-        // Resetta il form
+
         form.reset();
         document.getElementById('codice_univoco').value = '';
         document.getElementById('stato').value = 'In Magazzino';
+        document.getElementById('numero_serie').focus();
+
+        // Aggiorna il prossimo codice disponibile
+        const { data: newCode } = await supabase
+          .from('etichette_disponibili')
+          .select('codice_univoco')
+          .eq('usato', false)
+          .order('codice_univoco', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (newCode) {
+          const nextLabel = document.querySelector('.text-sm.text-gray-500 strong');
+          if (nextLabel) nextLabel.textContent = newCode.codice_univoco;
+        }
 
       } catch (error) {
         console.error('Errore:', error);
-        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
         messaggio.textContent = `❌ Errore: ${error.message}`;
       }
     });
