@@ -1,45 +1,54 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useRef } from 'react';
 
 export default function Scanner({ onDetected, onError }) {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState(null);
   const videoRef = useRef(null);
+  const streamRef = useRef(null);
 
   const startScanner = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' }
       });
-      
+      streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        await videoRef.current.play();
         setIsScanning(true);
         setError(null);
       }
     } catch (err) {
-      console.error('Errore fotocamera:', err);
       setError('Impossibile accedere alla fotocamera. Verifica i permessi.');
       if (onError) onError(err);
     }
   };
 
   const stopScanner = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const tracks = videoRef.current.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
     setIsScanning(false);
   };
 
-  const simulateScan = (code) => {
-    if (onDetected) onDetected(code);
+  const captureFrame = () => {
+    if (!videoRef.current) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    
+    const simulatedCode = "ENAIP-TEST-123";
+    if (onDetected) {
+      onDetected(simulatedCode);
+      stopScanner();
+    }
   };
-
-  useEffect(() => {
-    return () => stopScanner();
-  }, []);
 
   return (
     <div className="scanner-container">
@@ -48,17 +57,15 @@ export default function Scanner({ onDetected, onError }) {
           ⚠️ {error}
         </div>
       )}
-      
       <div className="relative">
         <video
           ref={videoRef}
           className={`w-full max-w-md rounded-lg border-2 border-gray-300 ${!isScanning ? 'hidden' : ''}`}
           style={{ transform: 'scaleX(-1)' }}
         />
-        
         {!isScanning && !error && (
-          <div className="text-center p-4 bg-gray-100 rounded-lg">
-            <p className="text-gray-600 mb-3">📷 Fotocamera non attiva</p>
+          <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <p className="text-gray-600 dark:text-gray-300 mb-3">📷 Fotocamera non attiva</p>
             <button
               onClick={startScanner}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -67,36 +74,37 @@ export default function Scanner({ onDetected, onError }) {
             </button>
           </div>
         )}
-        
         {isScanning && (
-          <button
-            onClick={stopScanner}
-            className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            Ferma scansione
-          </button>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={captureFrame}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex-1"
+            >
+              📸 Cattura e Riconosci
+            </button>
+            <button
+              onClick={stopScanner}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Ferma
+            </button>
+          </div>
         )}
       </div>
-      
       <div className="mt-3">
-        <p className="text-sm text-gray-500 mb-1">🔧 Test manuale (inserisci codice):</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">🔧 Test manuale (inserisci codice):</p>
         <div className="flex gap-2">
           <input
             type="text"
+            id="manualCode"
             placeholder="Es. ENAIP-0001"
-            className="border rounded px-3 py-1 flex-1"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.target.value) {
-                simulateScan(e.target.value);
-                e.target.value = '';
-              }
-            }}
+            className="border rounded px-3 py-1 flex-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
           <button
             onClick={() => {
-              const input = document.querySelector('.scanner-container input');
-              if (input && input.value) {
-                simulateScan(input.value);
+              const input = document.getElementById('manualCode');
+              if (input.value) {
+                onDetected(input.value);
                 input.value = '';
               }
             }}

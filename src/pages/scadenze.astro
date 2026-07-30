@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// Calcola le date
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const todayStr = today.toISOString().split('T')[0];
@@ -11,7 +10,6 @@ const future = new Date(today);
 future.setDate(future.getDate() + 30);
 const futureStr = future.toISOString().split('T')[0];
 
-// Asset in scadenza (prossimi 30 giorni)
 const { data: expiring } = await supabase
   .from('asset')
   .select('*')
@@ -19,14 +17,12 @@ const { data: expiring } = await supabase
   .lte('scadenza_garanzia', futureStr)
   .order('scadenza_garanzia', { ascending: true });
 
-// Asset già scaduti
 const { data: expired } = await supabase
   .from('asset')
   .select('*')
   .lt('scadenza_garanzia', todayStr)
   .order('scadenza_garanzia', { ascending: true });
 
-// Asset senza data di scadenza
 const { data: noWarranty } = await supabase
   .from('asset')
   .select('*')
@@ -36,10 +32,9 @@ const { data: noWarranty } = await supabase
 
 <Layout title="Scadenze Garanzie">
   <div class="p-4 max-w-6xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">🔔 Scadenze Garanzie</h1>
+    <h1 class="text-2xl font-bold dark:text-white mb-4">🔔 Scadenze Garanzie</h1>
     <p class="text-gray-600 dark:text-gray-400 mb-4">Monitoraggio delle garanzie in scadenza e scadute</p>
 
-    <!-- In scadenza -->
     <div class="mb-6">
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-lg font-semibold text-yellow-600 dark:text-yellow-400">
@@ -54,7 +49,7 @@ const { data: noWarranty } = await supabase
           {expiring.map(asset => (
             <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div>
-                <span class="font-medium">{asset.marca} {asset.modello}</span>
+                <span class="font-medium dark:text-white">{asset.marca} {asset.modello}</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
               </div>
@@ -72,7 +67,6 @@ const { data: noWarranty } = await supabase
       )}
     </div>
 
-    <!-- Già scadute -->
     <div class="mb-6">
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-lg font-semibold text-red-600 dark:text-red-400">
@@ -87,7 +81,7 @@ const { data: noWarranty } = await supabase
           {expired.map(asset => (
             <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div>
-                <span class="font-medium">{asset.marca} {asset.modello}</span>
+                <span class="font-medium dark:text-white">{asset.marca} {asset.modello}</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
               </div>
@@ -105,7 +99,6 @@ const { data: noWarranty } = await supabase
       )}
     </div>
 
-    <!-- Senza data di scadenza -->
     <div>
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-lg font-semibold text-gray-500 dark:text-gray-400">
@@ -120,7 +113,7 @@ const { data: noWarranty } = await supabase
           {noWarranty.map(asset => (
             <li key={asset.id} class="p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               <div>
-                <span class="font-medium">{asset.marca} {asset.modello}</span>
+                <span class="font-medium dark:text-white">{asset.marca} {asset.modello}</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.numero_serie || asset.codice_univoco})</span>
                 <span class="text-gray-500 dark:text-gray-400 ml-2 text-sm">{asset.tipo_asset}</span>
               </div>

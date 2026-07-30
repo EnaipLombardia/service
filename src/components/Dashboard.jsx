@@ -53,7 +53,6 @@ export default function Dashboard() {
     }
   }
 
-  // Gestisce la scansione del codice a barre
   async function handleScan(code) {
     setScannedCode(code);
     setScannedAsset(null);
@@ -95,7 +94,6 @@ export default function Dashboard() {
     }
   }
 
-  // Gestisce la scansione OCR
   async function handleOcrDetected(text) {
     const seriale = text.split(' ')[0] || text;
     setOcrResult(seriale);
@@ -165,7 +163,6 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      {/* Toast Notifications */}
       {toast && (
         <Toast 
           message={toast.message} 
@@ -175,7 +172,7 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h1 className="text-2xl font-bold">📦 Asset ENAIP Lombardia</h1>
+        <h1 className="text-2xl font-bold dark:text-white">📦 Asset ENAIP Lombardia</h1>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowScanner(!showScanner)}
@@ -207,10 +204,9 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* Scanner Codici a Barre */}
       {showScanner && (
         <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">🔍 Scansiona un asset</h2>
+          <h2 className="text-lg font-semibold dark:text-white mb-2">🔍 Scansiona un asset</h2>
           <Scanner onDetected={handleScan} />
           
           {scannedCode && !scannedAsset && (
@@ -239,7 +235,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Scanner OCR (Modal) */}
       {showOcr && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="max-w-md w-full">
@@ -266,7 +261,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Ricerca rapida */}
       <div className="mb-4 relative">
         <form onSubmit={handleSearch} className="flex gap-2">
           <input
@@ -296,10 +290,9 @@ export default function Dashboard() {
           )}
         </form>
 
-        {/* Risultati ricerca */}
         {searchResults.length > 0 && (
           <div className="mt-3 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-white">
               Risultati della ricerca ({searchResults.length})
             </h3>
             <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
@@ -311,7 +304,7 @@ export default function Dashboard() {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="font-semibold">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                      <span className="font-semibold dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                       <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
                       <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
                     </div>
@@ -334,7 +327,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Statistiche */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
           <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
@@ -368,7 +360,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Pulsanti azione */}
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
@@ -413,16 +404,15 @@ export default function Dashboard() {
           🔔 Scadenze
         </a>
         {nextCode && (
-          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center">
+          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center dark:text-white">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
           </span>
         )}
       </div>
 
-      {/* Asset recenti */}
       <div>
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">📋 Ultimi asset inseriti</h2>
+          <h2 className="text-lg font-semibold dark:text-white">📋 Ultimi asset inseriti</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {recentAssets.length > 0 && `Mostrando ${recentAssets.length} asset`}
           </span>
@@ -455,7 +445,7 @@ export default function Dashboard() {
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
-                    <span className="font-semibold">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                    <span className="font-semibold dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                     <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
                     <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
                   </div>
@@ -479,7 +469,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Footer */}
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
         <p>ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
         <p className="text-xs mt-1">
