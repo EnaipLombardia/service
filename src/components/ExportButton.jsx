@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabaseClient';
 export default function ExportButton() {
   const handleExport = async () => {
     try {
-      // Mostra un feedback all'utente
       const loading = document.createElement('div');
       loading.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
       loading.innerHTML = '<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"><p class="text-gray-900 dark:text-white">⏳ Esportazione in corso...</p></div>';
@@ -21,7 +20,6 @@ export default function ExportButton() {
         return;
       }
 
-      // Crea l'header del CSV
       const headers = ['Seriale', 'Tipo', 'Marca', 'Modello', 'Sede', 'Stato', 'Note'];
       const rows = data.map(a => [
         a.numero_serie || '',
@@ -38,7 +36,6 @@ export default function ExportButton() {
         ...rows.map(row => row.join(','))
       ].join('\n');
 
-      // Scarica il file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -58,12 +55,12 @@ export default function ExportButton() {
     }
   };
 
- return (
-  <button
-    onClick={handleExport}
-    className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors"
-  >
-    📥 Esporta CSV
-  </button>
-);
+  return (
+    <button
+      onClick={handleExport}
+      className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-3 py-1 rounded text-sm transition-colors"
+    >
+      📥 Esporta CSV
+    </button>
+  );
 }
