@@ -453,4 +453,28 @@ export default function Dashboard() {
                     <span className={`px-2 py-1 rounded text-sm ${
                       asset.stato === 'Assegnato' ? 'bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-300' :
                       asset.stato === 'In Magazzino' ? 'bg-yellow-200 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' :
-                      asset.stato === 'In Manutenzione' ? 'bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300'
+                      asset.stato === 'In Manutenzione' ? 'bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300' :
+                      'bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-300'
+                    }`}>
+                      {asset.stato}
+                    </span>
+                    <span className="text-gray-400 dark:text-gray-500 text-sm">
+                      {new Date(asset.created_at).toLocaleDateString('it-IT')}
+                    </span>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
+        <p>ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
+        <p className="text-xs mt-1">
+          {notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}
+        </p>
+      </div>
+    </div>
+  );
+}
