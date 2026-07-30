@@ -17,13 +17,13 @@ assets?.forEach(a => {
   byLocation[a.sede] = (byLocation[a.sede] || 0) + 1;
 });
 
-const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444', '#ec4899', '#14b8a6'];
+const colors = ['#006a4e', '#8b5a2b', '#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'];
 ---
 
 <Layout title="Admin Dashboard">
   <div class="p-4 max-w-6xl mx-auto">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">📊 Admin Dashboard</h1>
+      <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📊 Admin Dashboard</h1>
       <span class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded text-sm">
         {total} asset totali
       </span>
@@ -141,7 +141,7 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
     </div>
 
     <div class="mt-4">
-      <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      <a href="/" class="text-[#006a4e] dark:text-[#4a9a7e] hover:underline">← Torna alla dashboard</a>
     </div>
   </div>
 </Layout>
