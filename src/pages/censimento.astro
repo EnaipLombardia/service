@@ -18,4 +18,317 @@ try {
 
       <!-- Numero di Serie -->
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Numero di Serie <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="numero_serie"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. ABC123XYZ789"
+          required
+          autofocus
+        />
+      </div>
+
+      <!-- Tipo Asset -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Tipo Asset <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="tipo_asset"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
+          <option value="">Seleziona...</option>
+          <option value="Laptop">Laptop</option>
+          <option value="PCTower">PC Tower</option>
+          <option value="Monitor">Monitor</option>
+          <option value="Mouse">Mouse</option>
+          <option value="Tastiera">Tastiera</option>
+          <option value="Cellulare">Cellulare</option>
+          <option value="Schermo">Schermo</option>
+          <option value="Altro">Altro</option>
+        </select>
+      </div>
+
+      <!-- Marca -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Marca <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="marca"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. Dell, HP, Apple"
+          required
+        />
+      </div>
+
+      <!-- Modello -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Modello <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="modello"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. Latitude 5520"
+          required
+        />
+      </div>
+
+      <!-- Sede -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Sede <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="sede"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
+          <option value="">Seleziona...</option>
+          <option value="Milano">Milano</option>
+          <option value="Bergamo">Bergamo</option>
+          <option value="Brescia">Brescia</option>
+          <option value="Como">Como</option>
+          <option value="Lecco">Lecco</option>
+          <option value="Varese">Varese</option>
+          <option value="Sondrio">Sondrio</option>
+          <option value="Lodi">Lodi</option>
+          <option value="Cremona">Cremona</option>
+          <option value="Mantova">Mantova</option>
+        </select>
+      </div>
+
+      <!-- Stanza/Ufficio -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Stanza/Ufficio
+        </label>
+        <input
+          type="text"
+          id="stanza_ufficio"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Es. Piano 3 - Stanza 204"
+        />
+      </div>
+
+      <!-- Codice Univoco (opzionale) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Codice ENAIP <span class="text-gray-500 dark:text-gray-400">(opzionale)</span>
+        </label>
+        <input
+          type="text"
+          id="codice_univoco"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="ENAIP-0001"
+        />
+        {nextCode && (
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            🔖 Prossimo codice disponibile: <strong class="text-gray-700 dark:text-gray-300">{nextCode}</strong>
+          </p>
+        )}
+      </div>
+
+      <!-- Stato -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Stato <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="stato"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          required
+        >
+          <option value="In Magazzino">In Magazzino</option>
+          <option value="Assegnato">Assegnato</option>
+          <option value="In Manutenzione">In Manutenzione</option>
+          <option value="Dismesso">Dismesso</option>
+        </select>
+      </div>
+
+      <!-- Assegnato a (PeoplePicker) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Assegnato a <span class="text-red-500" id="assegnato-required">*</span>
+          <span class="text-gray-500 dark:text-gray-400 text-xs" id="assegnato-optional">(opzionale)</span>
+        </label>
+        <div id="people-picker-container"></div>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1" id="assegnato-hint">
+          💡 Se lo stato è "Assegnato", devi selezionare un dipendente
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        <button
+          type="button"
+          id="salvaBtn"
+          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+        >
+          💾 Salva e prossimo
+        </button>
+        <a
+          href="/"
+          class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
+        >
+          Annulla
+        </a>
+      </div>
+
+      <div id="messaggio" class="mt-4 hidden"></div>
+    </form>
+  </div>
+
+  <script>
+    import { supabase } from '../lib/supabaseClient';
+    import PeoplePicker from '../components/PeoplePicker';
+    import { render } from 'react-dom';
+    import React from 'react';
+
+    let selectedUser = null;
+
+    // Riferimenti agli elementi
+    const statoSelect = document.getElementById('stato');
+    const requiredLabel = document.getElementById('assegnato-required');
+    const optionalLabel = document.getElementById('assegnato-optional');
+    const hintText = document.getElementById('assegnato-hint');
+
+    function toggleAssegnatoRequired() {
+      const isAssegnato = statoSelect.value === 'Assegnato';
+      if (requiredLabel) requiredLabel.style.display = isAssegnato ? 'inline' : 'none';
+      if (optionalLabel) optionalLabel.style.display = isAssegnato ? 'none' : 'inline';
+      if (hintText) {
+        hintText.textContent = isAssegnato 
+          ? '⚠️ Campo obbligatorio se lo stato è "Assegnato"' 
+          : '💡 Se lo stato è "Assegnato", devi selezionare un dipendente';
+        hintText.className = isAssegnato 
+          ? 'text-xs text-red-500 dark:text-red-400 mt-1' 
+          : 'text-xs text-gray-400 dark:text-gray-500 mt-1';
+      }
+    }
+
+    const container = document.getElementById('people-picker-container');
+    if (container) {
+      render(
+        React.createElement(PeoplePicker, {
+          onSelect: (user) => {
+            selectedUser = user;
+            console.log('👤 Utente selezionato:', user);
+            if (statoSelect.value === 'Assegnato' && !user) {
+              document.getElementById('messaggio').className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+              document.getElementById('messaggio').textContent = '⚠️ Se lo stato è "Assegnato", devi selezionare un dipendente';
+            } else {
+              document.getElementById('messaggio').className = 'mt-4 hidden';
+            }
+          },
+          selectedEmail: null,
+          disabled: false,
+          required: false
+        }),
+        container
+      );
+    }
+
+    statoSelect.addEventListener('change', toggleAssegnatoRequired);
+    toggleAssegnatoRequired();
+
+    document.getElementById('salvaBtn').addEventListener('click', async function() {
+      const form = document.getElementById('censimentoForm');
+      const messaggio = document.getElementById('messaggio');
+      
+      const assetData = {
+        codice_univoco: document.getElementById('codice_univoco').value || null,
+        numero_serie: document.getElementById('numero_serie').value,
+        tipo_asset: document.getElementById('tipo_asset').value,
+        marca: document.getElementById('marca').value,
+        modello: document.getElementById('modello').value,
+        sede: document.getElementById('sede').value,
+        stanza_ufficio: document.getElementById('stanza_ufficio').value || null,
+        stato: document.getElementById('stato').value,
+        assegnato_a_email: selectedUser?.mail || selectedUser?.userPrincipalName || null,
+        assegnato_a_nome: selectedUser?.displayName || null
+      };
+
+      if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
+        return;
+      }
+
+      if (assetData.stato === 'Assegnato' && !selectedUser) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '⚠️ Se lo stato è "Assegnato", devi selezionare un dipendente';
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('asset')
+          .insert([assetData])
+          .select();
+
+        if (error) throw error;
+
+        if (data && data[0] && selectedUser) {
+          await supabase
+            .from('assegnazioni')
+            .insert([{
+              asset_id: data[0].id,
+              dipendente_nome: selectedUser.displayName,
+              dipendente_email: selectedUser.mail || selectedUser.userPrincipalName,
+              data_inizio: new Date().toISOString().split('T')[0],
+              motivo: 'Assegnazione iniziale'
+            }]);
+        }
+
+        messaggio.className = 'mt-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
+        messaggio.textContent = `✅ Asset "${assetData.marca} ${assetData.modello}" salvato!`;
+        
+        form.reset();
+        document.getElementById('codice_univoco').value = '';
+        document.getElementById('stato').value = 'In Magazzino';
+        document.getElementById('numero_serie').focus();
+
+        selectedUser = null;
+        if (container) {
+          render(
+            React.createElement(PeoplePicker, {
+              onSelect: (user) => {
+                selectedUser = user;
+              },
+              selectedEmail: null,
+              disabled: false,
+              required: false
+            }),
+            container
+          );
+        }
+        toggleAssegnatoRequired();
+
+        const { data: newCode } = await supabase
+          .from('etichette_disponibili')
+          .select('codice_univoco')
+          .eq('usato', false)
+          .order('codice_univoco', { ascending: true })
+          .limit(1)
+          .single();
+        
+        if (newCode) {
+          const nextLabel = document.querySelector('.text-sm.text-gray-500 strong');
+          if (nextLabel) nextLabel.textContent = newCode.codice_univoco;
+        }
+
+      } catch (error) {
+        console.error('Errore:', error);
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = `❌ Errore: ${error.message}`;
+      }
+    });
+  </script>
+</Layout>
