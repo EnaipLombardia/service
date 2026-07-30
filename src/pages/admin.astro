@@ -22,7 +22,7 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
 
 <Layout title="Admin Dashboard">
   <div class="p-4 max-w-6xl mx-auto">
-    <h1 class="text-2xl font-bold dark:text-white mb-4">📊 Admin Dashboard</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">📊 Admin Dashboard</h1>
     <p class="text-gray-600 dark:text-gray-400 mb-4">Panoramica completa del parco asset ENAIP Lombardia</p>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -45,13 +45,13 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
     </div>
 
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
-      <h2 class="text-lg font-semibold dark:text-white mb-4">📌 Asset per Tipo</h2>
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📌 Asset per Tipo</h2>
       <div class="space-y-3">
         {Object.entries(byType).map(([type, count], i) => (
           <div key={type}>
             <div class="flex justify-between text-sm">
-              <span class="dark:text-gray-300">{type}</span>
-              <span class="dark:text-gray-300">{count} ({Math.round((count/total)*100)}%)</span>
+              <span class="text-gray-700 dark:text-gray-300">{type}</span>
+              <span class="text-gray-700 dark:text-gray-300">{count} ({Math.round((count/total)*100)}%)</span>
             </div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
               <div 
@@ -66,7 +66,7 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold dark:text-white mb-4">📌 Asset per Stato</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📌 Asset per Stato</h2>
         <div class="space-y-3">
           {Object.entries(byStatus).map(([status, count]) => {
             const colorMap = {
@@ -78,8 +78,8 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
             return (
               <div key={status}>
                 <div class="flex justify-between text-sm">
-                  <span class="dark:text-gray-300">{status}</span>
-                  <span class="dark:text-gray-300">{count} ({Math.round((count/total)*100)}%)</span>
+                  <span class="text-gray-700 dark:text-gray-300">{status}</span>
+                  <span class="text-gray-700 dark:text-gray-300">{count} ({Math.round((count/total)*100)}%)</span>
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                   <div 
@@ -94,13 +94,13 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
       </div>
 
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold dark:text-white mb-4">📍 Asset per Sede</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📍 Asset per Sede</h2>
         <div class="space-y-3 max-h-64 overflow-y-auto">
           {Object.entries(byLocation).map(([location, count], i) => (
             <div key={location}>
               <div class="flex justify-between text-sm">
-                <span class="dark:text-gray-300">{location}</span>
-                <span class="dark:text-gray-300">{count} ({Math.round((count/total)*100)}%)</span>
+                <span class="text-gray-700 dark:text-gray-300">{location}</span>
+                <span class="text-gray-700 dark:text-gray-300">{count} ({Math.round((count/total)*100)}%)</span>
               </div>
               <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
                 <div 
@@ -115,7 +115,7 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
     </div>
 
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-      <h2 class="text-lg font-semibold dark:text-white mb-4">🆕 Ultimi asset inseriti</h2>
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">🆕 Ultimi asset inseriti</h2>
       {recent.length === 0 ? (
         <p class="text-gray-500 dark:text-gray-400">Nessun asset</p>
       ) : (
@@ -123,7 +123,7 @@ const colors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ef4444'
           {recent.map(asset => (
             <li key={asset.id} class="py-2 flex justify-between items-center">
               <div>
-                <span class="font-medium dark:text-white">{asset.numero_serie || asset.codice_univoco}</span>
+                <span class="font-medium text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco}</span>
                 <span class="text-gray-600 dark:text-gray-400 ml-2">{asset.marca} {asset.modello}</span>
               </div>
               <span class="text-sm text-gray-500 dark:text-gray-400">
