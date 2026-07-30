@@ -16,8 +16,8 @@ const { count } = await supabase
 <Layout title="Audit Log">
   <div class="p-4 max-w-6xl mx-auto">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold dark:text-white">📜 Audit Log</h1>
-      <span class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded text-sm dark:text-white">
+      <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📜 Audit Log</h1>
+      <span class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded text-sm text-gray-700 dark:text-gray-300">
         {count || 0} asset totali
       </span>
     </div>
@@ -33,24 +33,24 @@ const { count } = await supabase
           <table class="w-full">
             <thead class="bg-gray-100 dark:bg-gray-700">
               <tr>
-                <th class="p-3 text-left text-sm font-semibold dark:text-white">Asset</th>
-                <th class="p-3 text-left text-sm font-semibold dark:text-white">Seriale</th>
-                <th class="p-3 text-left text-sm font-semibold dark:text-white">Creato da</th>
-                <th class="p-3 text-left text-sm font-semibold dark:text-white">Modificato da</th>
-                <th class="p-3 text-left text-sm font-semibold dark:text-white">Ultima modifica</th>
+                <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Asset</th>
+                <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Seriale</th>
+                <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Creato da</th>
+                <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Modificato da</th>
+                <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Ultima modifica</th>
               </tr>
             </thead>
             <tbody>
               {assets.map(asset => (
                 <tr key={asset.id} class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <td class="p-3">
-                    <a href={`/asset/${asset.id}`} class="text-blue-500 hover:underline">
+                    <a href={`/asset/${asset.id}`} class="text-[#006a4e] dark:text-[#4a9a7e] hover:underline">
                       {asset.marca} {asset.modello}
                     </a>
                   </td>
-                  <td class="p-3 font-mono text-sm dark:text-gray-300">{asset.numero_serie || 'N/A'}</td>
-                  <td class="p-3 dark:text-gray-300">{asset.creato_da || 'Sistema'}</td>
-                  <td class="p-3 dark:text-gray-300">{asset.modificato_da || 'Sistema'}</td>
+                  <td class="p-3 font-mono text-sm text-gray-700 dark:text-gray-300">{asset.numero_serie || 'N/A'}</td>
+                  <td class="p-3 text-gray-700 dark:text-gray-300">{asset.creato_da || 'Sistema'}</td>
+                  <td class="p-3 text-gray-700 dark:text-gray-300">{asset.modificato_da || 'Sistema'}</td>
                   <td class="p-3 text-sm text-gray-500 dark:text-gray-400">
                     {new Date(asset.updated_at).toLocaleString('it-IT')}
                   </td>
@@ -75,7 +75,9 @@ const { count } = await supabase
     )}
 
     <div class="mt-4">
-      <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
+      <a href="/" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors inline-block">
+        ← Torna alla dashboard
+      </a>
     </div>
   </div>
 </Layout>
