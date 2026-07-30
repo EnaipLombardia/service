@@ -11,7 +11,7 @@ try {
 
 <Layout title="Nuovo Asset">
   <div class="p-4 max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">➕ Nuovo Asset</h1>
+    <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c] mb-4">➕ Nuovo Asset</h1>
 
     <form id="assetForm" class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
 
@@ -23,7 +23,7 @@ try {
         <input
           type="text"
           id="codice_univoco"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="Es. ENAIP-0001"
         />
         {nextCode && (
@@ -41,7 +41,7 @@ try {
         <input
           type="text"
           id="numero_serie"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="Es. ABC123XYZ789"
           required
         />
@@ -54,7 +54,7 @@ try {
         </label>
         <select
           id="tipo_asset"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           required
         >
           <option value="">Seleziona...</option>
@@ -77,7 +77,7 @@ try {
         <input
           type="text"
           id="marca"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="Es. Dell, HP, Apple"
           required
         />
@@ -91,7 +91,7 @@ try {
         <input
           type="text"
           id="modello"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="Es. Latitude 5520"
           required
         />
@@ -104,7 +104,7 @@ try {
         </label>
         <select
           id="sede"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           required
         >
           <option value="">Seleziona...</option>
@@ -129,7 +129,7 @@ try {
         <input
           type="text"
           id="stanza_ufficio"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="Es. Piano 3 - Stanza 204"
         />
       </div>
@@ -141,7 +141,7 @@ try {
         </label>
         <select
           id="stato"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           required
         >
           <option value="In Magazzino">In Magazzino</option>
@@ -151,15 +151,19 @@ try {
         </select>
       </div>
 
-      <!-- Assegnato a (PeoplePicker) -->
+      <!-- Assegnato a -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Assegnato a <span class="text-red-500" id="assegnato-required">*</span>
-          <span class="text-gray-500 dark:text-gray-400 text-xs" id="assegnato-optional">(opzionale)</span>
+          Assegnato a <span class="text-gray-500 dark:text-gray-400 text-xs">(opzionale)</span>
         </label>
-        <div id="people-picker-container"></div>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1" id="assegnato-hint">
-          💡 Se lo stato è "Assegnato", devi selezionare un dipendente
+        <input
+          type="text"
+          id="assegnato_a"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
+          placeholder="Nome o email del dipendente"
+        />
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+          💡 Inserisci il nome o l'email del dipendente a cui viene assegnato l'asset
         </p>
       </div>
 
@@ -171,7 +175,7 @@ try {
         <input
           type="date"
           id="data_acquisto"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
         />
       </div>
 
@@ -184,7 +188,7 @@ try {
           type="number"
           id="costo_acquisto"
           step="0.01"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="0.00"
         />
       </div>
@@ -197,7 +201,7 @@ try {
         <input
           type="date"
           id="scadenza_garanzia"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
         />
       </div>
 
@@ -209,7 +213,7 @@ try {
         <textarea
           id="note"
           rows="3"
-          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
           placeholder="Eventuali note sull'asset..."
         ></textarea>
       </div>
@@ -219,13 +223,13 @@ try {
         <button
           type="button"
           id="salvaBtn"
-          class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+          class="flex-1 bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded transition-colors"
         >
           💾 Salva Asset
         </button>
         <a
           href="/"
-          class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
+          class="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded transition-colors"
         >
           Annulla
         </a>
@@ -237,63 +241,7 @@ try {
 
   <script>
     import { supabase } from '../lib/supabaseClient';
-    import PeoplePicker from '../components/PeoplePicker';
-    import { render } from 'react-dom';
-    import React from 'react';
 
-    // Stato per l'utente selezionato
-    let selectedUser = null;
-
-    // Riferimenti agli elementi
-    const statoSelect = document.getElementById('stato');
-    const requiredLabel = document.getElementById('assegnato-required');
-    const optionalLabel = document.getElementById('assegnato-optional');
-    const hintText = document.getElementById('assegnato-hint');
-
-    // Gestisce la visibilità del campo obbligatorio
-    function toggleAssegnatoRequired() {
-      const isAssegnato = statoSelect.value === 'Assegnato';
-      if (requiredLabel) requiredLabel.style.display = isAssegnato ? 'inline' : 'none';
-      if (optionalLabel) optionalLabel.style.display = isAssegnato ? 'none' : 'inline';
-      if (hintText) {
-        hintText.textContent = isAssegnato 
-          ? '⚠️ Campo obbligatorio se lo stato è "Assegnato"' 
-          : '💡 Se lo stato è "Assegnato", devi selezionare un dipendente';
-        hintText.className = isAssegnato 
-          ? 'text-xs text-red-500 dark:text-red-400 mt-1' 
-          : 'text-xs text-gray-400 dark:text-gray-500 mt-1';
-      }
-    }
-
-    // Renderizza il PeoplePicker
-    const container = document.getElementById('people-picker-container');
-    if (container) {
-      render(
-        React.createElement(PeoplePicker, {
-          onSelect: (user) => {
-            selectedUser = user;
-            console.log('👤 Utente selezionato:', user);
-            // Verifica se il campo è obbligatorio
-            if (statoSelect.value === 'Assegnato' && !user) {
-              document.getElementById('messaggio').className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-              document.getElementById('messaggio').textContent = '⚠️ Se lo stato è "Assegnato", devi selezionare un dipendente';
-            } else {
-              document.getElementById('messaggio').className = 'mt-4 hidden';
-            }
-          },
-          selectedEmail: null,
-          disabled: false,
-          required: false
-        }),
-        container
-      );
-    }
-
-    // Event listener per il cambio stato
-    statoSelect.addEventListener('change', toggleAssegnatoRequired);
-    toggleAssegnatoRequired();
-
-    // Funzione per salvare l'asset
     document.getElementById('salvaBtn').addEventListener('click', async function() {
       const form = document.getElementById('assetForm');
       const messaggio = document.getElementById('messaggio');
@@ -311,21 +259,12 @@ try {
         costo_acquisto: document.getElementById('costo_acquisto').value || null,
         scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
         note: document.getElementById('note').value || null,
-        assegnato_a_email: selectedUser?.mail || selectedUser?.userPrincipalName || null,
-        assegnato_a_nome: selectedUser?.displayName || null
+        assegnato_a: document.getElementById('assegnato_a').value || null
       };
 
-      // Validazione
       if (!assetData.numero_serie || !assetData.tipo_asset || !assetData.marca || !assetData.modello || !assetData.sede || !assetData.stato) {
         messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
         messaggio.textContent = '⚠️ Compila tutti i campi obbligatori (*)';
-        return;
-      }
-
-      // Validazione: se stato "Assegnato", deve avere un utente
-      if (assetData.stato === 'Assegnato' && !selectedUser) {
-        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-        messaggio.textContent = '⚠️ Se lo stato è "Assegnato", devi selezionare un dipendente';
         return;
       }
 
@@ -337,14 +276,13 @@ try {
 
         if (error) throw error;
 
-        // Se l'asset è stato assegnato, crea un record nella tabella assegnazioni
-        if (data && data[0] && selectedUser) {
+        if (data && data[0] && assetData.assegnato_a) {
           await supabase
             .from('assegnazioni')
             .insert([{
               asset_id: data[0].id,
-              dipendente_nome: selectedUser.displayName,
-              dipendente_email: selectedUser.mail || selectedUser.userPrincipalName,
+              dipendente_nome: assetData.assegnato_a,
+              dipendente_email: assetData.assegnato_a,
               data_inizio: new Date().toISOString().split('T')[0],
               motivo: 'Assegnazione iniziale'
             }]);
@@ -358,25 +296,6 @@ try {
         document.getElementById('stato').value = 'In Magazzino';
         document.getElementById('numero_serie').focus();
 
-        // Resetta il PeoplePicker
-        selectedUser = null;
-        // Ricarica il PeoplePicker per resettarlo
-        if (container) {
-          render(
-            React.createElement(PeoplePicker, {
-              onSelect: (user) => {
-                selectedUser = user;
-              },
-              selectedEmail: null,
-              disabled: false,
-              required: false
-            }),
-            container
-          );
-        }
-        toggleAssegnatoRequired();
-
-        // Aggiorna il prossimo codice disponibile
         try {
           const { data: newCode } = await supabase
             .from('etichette_disponibili')
