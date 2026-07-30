@@ -7,18 +7,33 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled }) {
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Inizializza il client Graph (per ora con token fittizio)
-  const getGraphClient = () => {
-    // ⚠️ PER ORA USIAMO UN TOKEN FITTIZIO PER TEST
-    // Dopo implementeremo il login con Azure AD
-    const accessToken = localStorage.getItem('graphAccessToken') || 'TOKEN_FITTIZIO';
-    return Client.init({
-      authProvider: (done) => {
-        done(null, accessToken);
+const getGraphClient = () => {
+  const accessToken = localStorage.getItem('graphAccessToken');
+  if (!accessToken) {
+    throw new Error('accessToken mancante');
+  }
+  return Client.init({
+    authProvider: (done) => {
+      done(null, accessToken);
+    }
+  });
+};
+{!localStorage.getItem('graphAccessToken') && (
+  <button
+    onClick={async () => {
+      try {
+        const { login } = await import('../lib/auth');
+        await login();
+        window.location.reload();
+      } catch (e) {
+        alert('❌ Errore login: ' + e.message);
       }
-    });
-  };
-
+    }}
+    className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+  >
+    🔑 Accedi con Microsoft 365
+  </button>
+)}
   const searchUsers = async (query) => {
     if (query.length < 2) {
       setUsers([]);
