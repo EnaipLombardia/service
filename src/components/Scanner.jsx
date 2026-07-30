@@ -84,4 +84,36 @@ export default function Scanner({ onDetected, onError }) {
             </button>
             <button
               onClick={stopScanner}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Ferma
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="mt-3">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">🔧 Test manuale (inserisci codice):</p>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            id="manualCode"
+            placeholder="Es. ENAIP-0001"
+            className="border rounded px-3 py-1 flex-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+          <button
+            onClick={() => {
+              const input = document.getElementById('manualCode');
+              if (input.value) {
+                onDetected(input.value);
+                input.value = '';
+              }
+            }}
+            className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
+          >
+            Simula
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
