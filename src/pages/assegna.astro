@@ -2,7 +2,6 @@
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// Ottieni l'ID dell'asset dalla query string (se presente)
 const urlParams = new URL(Astro.request.url).searchParams;
 const assetId = urlParams.get('id');
 let asset = null;
@@ -30,49 +29,46 @@ if (assetId) {
 
 <Layout title="Assegna Asset">
   <div class="p-4 max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">🔄 Assegna Asset</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">🔄 Assegna Asset</h1>
     
     {asset ? (
-      <div class="bg-white shadow rounded-lg p-6">
-        <div class="mb-4 p-3 bg-gray-100 rounded">
-          <p><strong>Asset:</strong> {asset.marca} {asset.modello}</p>
-          <p><strong>Seriale:</strong> {asset.numero_serie}</p>
-          <p><strong>Stato attuale:</strong> {asset.stato}</p>
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div class="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded">
+          <p class="text-gray-700 dark:text-gray-300"><strong>Asset:</strong> {asset.marca} {asset.modello}</p>
+          <p class="text-gray-700 dark:text-gray-300"><strong>Seriale:</strong> {asset.numero_serie}</p>
+          <p class="text-gray-700 dark:text-gray-300"><strong>Stato attuale:</strong> {asset.stato}</p>
         </div>
 
         {currentAssignment ? (
-          <div class="mb-4 p-3 bg-yellow-50 rounded border border-yellow-200">
-            <p>⚠️ Questo asset è già assegnato a <strong>{currentAssignment.dipendente_nome}</strong></p>
-            <p class="text-sm text-gray-600">Dal {currentAssignment.data_inizio}</p>
-            <p class="text-sm mt-2">Per riassegnarlo, prima <a href={`/restituisci?id=${asset.id}`} class="text-blue-500 hover:underline">restituiscilo</a>.</p>
+          <div class="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded border border-yellow-200 dark:border-yellow-700">
+            <p class="text-yellow-700 dark:text-yellow-400">
+              ⚠️ Questo asset è già assegnato a <strong>{currentAssignment.dipendente_nome}</strong>
+            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Dal {currentAssignment.data_inizio}</p>
+            <p class="text-sm mt-2">
+              <a href={`/restituisci?id=${asset.id}`} class="text-blue-500 hover:underline">
+                📤 Restituiscilo prima di riassegnarlo
+              </a>
+            </p>
           </div>
         ) : (
           <form id="assignForm">
             <div class="mb-4">
-              <label class="block text-sm font-medium mb-1">Email Dipendente *</label>
-              <input 
-                type="email" 
-                id="email" 
-                class="w-full border rounded px-3 py-2"
-                placeholder="nome.cognome@enaip.lombardia.it"
-                required
-              />
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Assegna a <span class="text-red-500">*</span>
+              </label>
+              <div id="people-picker-container"></div>
             </div>
 
             <div class="mb-4">
-              <label class="block text-sm font-medium mb-1">Nome Dipendente *</label>
-              <input 
-                type="text" 
-                id="nome" 
-                class="w-full border rounded px-3 py-2"
-                placeholder="Mario Rossi"
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Motivo <span class="text-red-500">*</span>
+              </label>
+              <select
+                id="motivo"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 required
-              />
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-sm font-medium mb-1">Motivo *</label>
-              <select id="motivo" class="w-full border rounded px-3 py-2" required>
+              >
                 <option value="Consegna">Consegna</option>
                 <option value="Sostituzione">Sostituzione</option>
                 <option value="Trasferimento">Trasferimento</option>
@@ -81,13 +77,19 @@ if (assetId) {
             </div>
 
             <div class="flex gap-2">
-              <button 
+              <button
                 type="button"
                 id="assegnaBtn"
-                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors"
               >
                 ✅ Conferma Assegnazione
               </button>
+              <a
+                href={`/asset/${asset.id}`}
+                class="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
+              >
+                Annulla
+              </a>
             </div>
 
             <div id="messaggio" class="mt-4 hidden"></div>
@@ -99,56 +101,77 @@ if (assetId) {
         </div>
       </div>
     ) : (
-      <div class="bg-yellow-100 p-4 rounded">
-        <p>⚠️ Nessun asset selezionato. Vai prima nella scheda dell'asset e clicca su "Assegna".</p>
+      <div class="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded">
+        <p class="text-yellow-700 dark:text-yellow-400">⚠️ Nessun asset selezionato.</p>
         <a href="/" class="text-blue-500 hover:underline">← Torna alla dashboard</a>
       </div>
     )}
   </div>
 
   <script>
-    document.getElementById('assegnaBtn')?.addEventListener('click', async function() {
-      const messaggio = document.getElementById('messaggio');
-      const email = document.getElementById('email').value;
-      const nome = document.getElementById('nome').value;
-      const motivo = document.getElementById('motivo').value;
-      const assetId = new URLSearchParams(window.location.search).get('id');
+    import { supabase } from '../lib/supabaseClient';
+    import PeoplePicker from '../components/PeoplePicker';
+    import { render } from 'react-dom';
+    import React from 'react';
 
-      if (!email || !nome || !motivo) {
-        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
-        messaggio.textContent = '⚠️ Compila tutti i campi obbligatori';
+    let selectedUser = null;
+
+    const container = document.getElementById('people-picker-container');
+    if (container) {
+      render(
+        React.createElement(PeoplePicker, {
+          onSelect: (user) => {
+            selectedUser = user;
+            console.log('👤 Utente selezionato:', user);
+          },
+          selectedEmail: null,
+          disabled: false,
+          required: true
+        }),
+        container
+      );
+    }
+
+    document.getElementById('assegnaBtn').addEventListener('click', async function() {
+      const messaggio = document.getElementById('messaggio');
+      const assetId = new URLSearchParams(window.location.search).get('id');
+      const motivo = document.getElementById('motivo').value;
+
+      if (!selectedUser) {
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '⚠️ Seleziona un dipendente a cui assegnare l\'asset';
         return;
       }
 
       try {
-        // 1. Chiudi l'assegnazione corrente (se esiste)
+        // Chiudi l'assegnazione corrente
         await supabase
           .from('assegnazioni')
           .update({ data_fine: new Date().toISOString().split('T')[0] })
           .eq('asset_id', assetId)
           .is('data_fine', null);
 
-        // 2. Crea la nuova assegnazione
+        // Crea la nuova assegnazione
         const { error } = await supabase
           .from('assegnazioni')
           .insert([{
             asset_id: assetId,
-            dipendente_email: email,
-            dipendente_nome: nome,
+            dipendente_email: selectedUser.mail || selectedUser.userPrincipalName,
+            dipendente_nome: selectedUser.displayName,
             data_inizio: new Date().toISOString().split('T')[0],
             motivo: motivo
           }]);
 
         if (error) throw error;
 
-        // 3. Aggiorna lo stato dell'asset
+        // Aggiorna lo stato dell'asset
         await supabase
           .from('asset')
           .update({ stato: 'Assegnato' })
           .eq('id', assetId);
 
-        messaggio.className = 'mt-4 p-3 bg-green-100 text-green-700 rounded';
-        messaggio.textContent = `✅ Asset assegnato a ${nome} con successo!`;
+        messaggio.className = 'mt-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
+        messaggio.textContent = `✅ Asset assegnato a ${selectedUser.displayName} con successo!`;
         
         setTimeout(() => {
           window.location.href = `/asset/${assetId}`;
@@ -156,7 +179,7 @@ if (assetId) {
 
       } catch (error) {
         console.error('Errore:', error);
-        messaggio.className = 'mt-4 p-3 bg-red-100 text-red-700 rounded';
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
         messaggio.textContent = `❌ Errore: ${error.message}`;
       }
     });
