@@ -2,14 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// Ottieni gli ultimi 50 asset modificati
 const { data: assets, error } = await supabase
   .from('asset')
   .select('*')
   .order('updated_at', { ascending: false })
   .limit(50);
 
-// Ottieni il conteggio totale
 const { count } = await supabase
   .from('asset')
   .select('*', { count: 'exact', head: true });
@@ -18,8 +16,8 @@ const { count } = await supabase
 <Layout title="Audit Log">
   <div class="p-4 max-w-6xl mx-auto">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold">📜 Audit Log</h1>
-      <span class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded text-sm">
+      <h1 class="text-2xl font-bold dark:text-white">📜 Audit Log</h1>
+      <span class="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded text-sm dark:text-white">
         {count || 0} asset totali
       </span>
     </div>
@@ -35,11 +33,11 @@ const { count } = await supabase
           <table class="w-full">
             <thead class="bg-gray-100 dark:bg-gray-700">
               <tr>
-                <th class="p-3 text-left text-sm font-semibold">Asset</th>
-                <th class="p-3 text-left text-sm font-semibold">Seriale</th>
-                <th class="p-3 text-left text-sm font-semibold">Creato da</th>
-                <th class="p-3 text-left text-sm font-semibold">Modificato da</th>
-                <th class="p-3 text-left text-sm font-semibold">Ultima modifica</th>
+                <th class="p-3 text-left text-sm font-semibold dark:text-white">Asset</th>
+                <th class="p-3 text-left text-sm font-semibold dark:text-white">Seriale</th>
+                <th class="p-3 text-left text-sm font-semibold dark:text-white">Creato da</th>
+                <th class="p-3 text-left text-sm font-semibold dark:text-white">Modificato da</th>
+                <th class="p-3 text-left text-sm font-semibold dark:text-white">Ultima modifica</th>
               </tr>
             </thead>
             <tbody>
@@ -50,9 +48,9 @@ const { count } = await supabase
                       {asset.marca} {asset.modello}
                     </a>
                   </td>
-                  <td class="p-3 font-mono text-sm">{asset.numero_serie || 'N/A'}</td>
-                  <td class="p-3">{asset.creato_da || 'Sistema'}</td>
-                  <td class="p-3">{asset.modificato_da || 'Sistema'}</td>
+                  <td class="p-3 font-mono text-sm dark:text-gray-300">{asset.numero_serie || 'N/A'}</td>
+                  <td class="p-3 dark:text-gray-300">{asset.creato_da || 'Sistema'}</td>
+                  <td class="p-3 dark:text-gray-300">{asset.modificato_da || 'Sistema'}</td>
                   <td class="p-3 text-sm text-gray-500 dark:text-gray-400">
                     {new Date(asset.updated_at).toLocaleString('it-IT')}
                   </td>
