@@ -6,9 +6,7 @@ import { getNextAvailableCode } from '../lib/assetFunctions';
 let nextCode = '';
 try {
   nextCode = await getNextAvailableCode();
-} catch (e) {
-  // Se non ci sono codici disponibili, non importa
-}
+} catch (e) {}
 ---
 
 <Layout title="Nuovo Asset">
@@ -153,14 +151,19 @@ try {
         </select>
       </div>
 
-      <!-- Assegnato a (con PeoplePicker) -->
+      <!-- Assegnato a (campo manuale) -->
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Assegnato a <span class="text-gray-500 dark:text-gray-400 text-xs">(opzionale)</span>
         </label>
-        <div id="people-picker-container"></div>
+        <input
+          type="text"
+          id="assegnato_a"
+          class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          placeholder="Nome o email del dipendente (es. mario.rossi@enaip.it)"
+        />
         <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          💡 Inizia a digitare il nome o l'email del dipendente
+          💡 Inserisci il nome o l'email del dipendente a cui viene assegnato l'asset
         </p>
       </div>
 
@@ -238,30 +241,7 @@ try {
 
   <script>
     import { supabase } from '../lib/supabaseClient';
-    import PeoplePicker from '../components/PeoplePicker';
-    import { render } from 'react-dom';
-    import React from 'react';
 
-    // Stato per l'utente selezionato
-    let selectedUser = null;
-
-    // Renderizza il PeoplePicker
-    const container = document.getElementById('people-picker-container');
-    if (container) {
-      render(
-        React.createElement(PeoplePicker, {
-          onSelect: (user) => {
-            selectedUser = user;
-            console.log('👤 Utente selezionato:', user);
-          },
-          selectedEmail: null,
-          disabled: false
-        }),
-        container
-      );
-    }
-
-    // Funzione per salvare l'asset
     document.getElementById('salvaBtn').addEventListener('click', async function() {
       const form = document.getElementById('assetForm');
       const messaggio = document.getElementById('messaggio');
@@ -279,9 +259,7 @@ try {
         costo_acquisto: document.getElementById('costo_acquisto').value || null,
         scadenza_garanzia: document.getElementById('scadenza_garanzia').value || null,
         note: document.getElementById('note').value || null,
-        // Aggiungi i campi dell'utente selezionato
-        assegnato_a_email: selectedUser?.mail || selectedUser?.userPrincipalName || null,
-        assegnato_a_nome: selectedUser?.displayName || null
+        assegnato_a: document.getElementById('assegnato_a').value || null
       };
 
       // Validazione
@@ -298,6 +276,19 @@ try {
           .select();
 
         if (error) throw error;
+
+        // Se l'asset è stato assegnato, crea un record nella tabella assegnazioni
+        if (data && data[0] && assetData.assegnato_a) {
+          await supabase
+            .from('assegnazioni')
+            .insert([{
+              asset_id: data[0].id,
+              dipendente_nome: assetData.assegnato_a,
+              dipendente_email: assetData.assegnato_a,
+              data_inizio: new Date().toISOString().split('T')[0],
+              motivo: 'Assegnazione iniziale'
+            }]);
+        }
 
         messaggio.className = 'mt-4 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
         messaggio.textContent = `✅ Asset "${assetData.marca} ${assetData.modello}" salvato con successo!`;
@@ -321,9 +312,7 @@ try {
             const nextLabel = document.querySelector('.text-sm.text-gray-500 strong');
             if (nextLabel) nextLabel.textContent = newCode.codice_univoco;
           }
-        } catch (e) {
-          // Se non ci sono codici disponibili, ignora
-        }
+        } catch (e) {}
 
       } catch (error) {
         console.error('Errore:', error);
