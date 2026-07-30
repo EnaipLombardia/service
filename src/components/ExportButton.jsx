@@ -58,12 +58,12 @@ export default function ExportButton() {
     }
   };
 
-  return (
-    <button
-      onClick={handleExport}
-      className="bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded text-sm transition-colors"
-    >
-      📥 Esporta CSV
-    </button>
-  );
+ return (
+  <button
+    onClick={handleExport}
+    className="bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors"
+  >
+    📥 Esporta CSV
+  </button>
+);
 }
