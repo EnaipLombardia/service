@@ -9,13 +9,11 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled, requir
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState(null);
 
-  // Verifica se l'utente è loggato
   useEffect(() => {
     const token = localStorage.getItem('graphAccessToken');
     setIsLoggedIn(!!token);
   }, []);
 
-  // Inizializza il client Graph
   const getGraphClient = () => {
     const accessToken = localStorage.getItem('graphAccessToken');
     if (!accessToken) {
@@ -28,7 +26,12 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled, requir
     });
   };
 
-  // Funzione per il login
+  // 🔥 FILTRO PER DOMINIO ENAIP 🔥
+  const isEnaipUser = (user) => {
+    const email = user.mail || user.userPrincipalName || '';
+    return email.toLowerCase().endsWith('@enaip.lombardia.it');
+  };
+
   const handleLogin = async () => {
     try {
       const { login } = await import('../lib/auth');
@@ -41,9 +44,9 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled, requir
     }
   };
 
-  // Logout
   const handleLogout = () => {
     localStorage.removeItem('graphAccessToken');
+    localStorage.removeItem('userInfo');
     setIsLoggedIn(false);
     setSelectedUser(null);
     setSearchTerm('');
@@ -51,7 +54,6 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled, requir
     if (onSelect) onSelect(null);
   };
 
-  // Ricerca utenti
   const searchUsers = async (query) => {
     if (query.length < 2) {
       setUsers([]);
@@ -66,10 +68,15 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled, requir
         .api('/users')
         .filter(`startswith(displayName, '${query}') or startswith(userPrincipalName, '${query}')`)
         .select('id,displayName,mail,userPrincipalName,department,jobTitle')
-        .top(10)
+        .top(20)
         .get();
 
-      setUsers(response.value || []);
+      const enaipUsers = (response.value || []).filter(isEnaipUser);
+      setUsers(enaipUsers);
+
+      if (enaipUsers.length === 0 && response.value && response.value.length > 0) {
+        setError('🔍 Nessun utente trovato con dominio @enaip.lombardia.it');
+      }
     } catch (error) {
       console.error('Errore ricerca utenti:', error);
       if (error.message.includes('accessToken') || error.statusCode === 401) {
@@ -89,12 +96,14 @@ export default function PeoplePicker({ onSelect, selectedEmail, disabled, requir
     setSelectedUser(user);
     setSearchTerm(user.displayName);
     setUsers([]);
+    setError(null);
     if (onSelect) onSelect(user);
   };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
+    setError(null);
     if (value.length >= 2 && isLoggedIn) {
       searchUsers(value);
     } else {
