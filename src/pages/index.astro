@@ -2,45 +2,8 @@
 import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
-
-// 🔥 PROTEZIONE LOGIN CON GESTIONE ERRORI PER BUILD 🔥
-let user = null;
-let error = null;
-let isBuild = false;
-
-try {
-  // Verifica se siamo in build (server) o in browser
-  if (typeof window === 'undefined') {
-    isBuild = true;
-  }
-  
-  const { data, error: authError } = await supabase.auth.getUser();
-  if (authError) {
-    // Ignora l'errore di sessione durante il build
-    if (!authError.message?.includes('session') && !authError.message?.includes('Auth session missing')) {
-      error = authError;
-    }
-  } else {
-    user = data?.user;
-  }
-} catch (err) {
-  // Ignora gli errori durante il build
-  if (!err.message?.includes('session')) {
-    error = err;
-  }
-}
-
-// Se non loggato e siamo in produzione (non in build), reindirizza al login
-if (!user && !isBuild) {
-  return Astro.redirect('/login');
-}
 ---
 
 <Layout title="Asset ENAIP">
-  {error && (
-    <div class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded mb-4">
-      ⚠️ Errore: {error.message}
-    </div>
-  )}
   <Dashboard client:load />
 </Layout>
