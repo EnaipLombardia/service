@@ -18,7 +18,7 @@ import { supabase } from '../lib/supabaseClient';
             type="email"
             id="email"
             class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
-            placeholder="nome.cognome@enaip.lombardia.it"
+            placeholder="nome.cognome@enaiplombardia.it"
             required
           />
         </div>
@@ -44,8 +44,6 @@ import { supabase } from '../lib/supabaseClient';
 
         <div id="messaggio" class="mt-3 hidden"></div>
       </form>
-
-      <!-- 🔒 RIMOSSO IL LINK "REGISTRATI" -->
     </div>
   </div>
 
@@ -55,43 +53,53 @@ import { supabase } from '../lib/supabaseClient';
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const email = document.getElementById('email').value;
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       const messaggio = document.getElementById('messaggio');
       const loginBtn = document.getElementById('loginBtn');
 
-      // Disabilita il pulsante per evitare doppi click
+      if (!email || !password) {
+        messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '❌ Inserisci email e password';
+        return;
+      }
+
       loginBtn.disabled = true;
       loginBtn.textContent = '⏳ Caricamento...';
 
       try {
+        console.log('🔍 Tentativo login per:', email);
+
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email,
           password: password
         });
 
         if (error) {
+          console.error('❌ Errore login:', error);
           messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-          messaggio.textContent = '❌ ' + error.message;
+          messaggio.textContent = '❌ ' + (error.message || 'Credenziali non valide');
           loginBtn.disabled = false;
           loginBtn.textContent = 'Accedi';
           return;
         }
 
-        messaggio.className = 'mt-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
-        messaggio.textContent = '✅ Login effettuato! Reindirizzamento...';
-
-        // Salva l'utente in sessionStorage per riconoscere il login
-        sessionStorage.setItem('user', JSON.stringify(data.user));
-
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1500);
+        if (data?.user) {
+          console.log('✅ Login riuscito:', data.user.email);
+          messaggio.className = 'mt-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
+          messaggio.textContent = '✅ Login effettuato! Reindirizzamento...';
+          
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1500);
+        } else {
+          throw new Error('Nessun utente restituito');
+        }
 
       } catch (error) {
-        console.error('Errore login:', error);
+        console.error('❌ Errore imprevisto:', error);
         messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-        messaggio.textContent = '❌ Errore: ' + error.message;
+        messaggio.textContent = '❌ ' + (error.message || 'Errore imprevisto');
         loginBtn.disabled = false;
         loginBtn.textContent = 'Accedi';
       }
