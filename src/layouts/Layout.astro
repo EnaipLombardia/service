@@ -2,7 +2,7 @@
 export interface Props {
   title: string;
 }
-
+import { supabase } from '../lib/supabaseClient'; // 👈 AGGIUNGI QUESTA RIGA
 const { title } = Astro.props;
 const isHome = Astro.url.pathname === '/';
 const { data: { user } } = await supabase.auth.getUser();
