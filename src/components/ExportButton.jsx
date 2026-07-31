@@ -5,7 +5,7 @@ export default function ExportButton() {
     try {
       const loading = document.createElement('div');
       loading.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-      loading.innerHTML = '<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"><p class="text-gray-900 dark:text-white">⏳ Esportazione in corso...</p></div>';
+      loading.innerHTML = '<div class="bg-[#006a4e] hover:bg-[#005a3e] text-white"><p class="bg-[#006a4e] hover:bg-[#005a3e] text-white">⏳ Esportazione in corso...</p></div>';
       document.body.appendChild(loading);
 
       const { data, error } = await supabase
