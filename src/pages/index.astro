@@ -1,11 +1,8 @@
 ---
 import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
-import ProtectedRoute from '../components/ProtectedRoute';
 ---
 
 <Layout title="Asset ENAIP">
-  <ProtectedRoute client:load>
-    <Dashboard client:load />
-  </ProtectedRoute>
+  <Dashboard client:load />
 </Layout>
