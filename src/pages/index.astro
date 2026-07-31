@@ -3,39 +3,44 @@ import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// 🔥 PROTEZIONE LOGIN SOLO CON SUPABASE 🔥
+// 🔥 PROTEZIONE LOGIN CON GESTIONE ERRORI PER BUILD 🔥
 let user = null;
 let error = null;
+let isBuild = false;
 
 try {
+  // Verifica se siamo in build (server) o in browser
+  if (typeof window === 'undefined') {
+    isBuild = true;
+  }
+  
   const { data, error: authError } = await supabase.auth.getUser();
   if (authError) {
-    console.error('❌ Errore verifica login:', authError);
-    error = authError;
+    // Ignora l'errore di sessione durante il build
+    if (!authError.message?.includes('session') && !authError.message?.includes('Auth session missing')) {
+      error = authError;
+    }
   } else {
     user = data?.user;
   }
 } catch (err) {
-  console.error('❌ Errore imprevisto:', err);
-  error = err;
+  // Ignora gli errori durante il build
+  if (!err.message?.includes('session')) {
+    error = err;
+  }
 }
 
-// Se non loggato, reindirizza al login
-if (!user) {
-  console.log('🔒 Utente non loggato, reindirizzamento a /login');
+// Se non loggato e siamo in produzione (non in build), reindirizza al login
+if (!user && !isBuild) {
   return Astro.redirect('/login');
 }
-
-console.log('✅ Utente loggato:', user?.email);
 ---
 
 <Layout title="Asset ENAIP">
-  <div class="p-4">
-    {error && (
-      <div class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded mb-4">
-        ⚠️ Errore: {error.message}
-      </div>
-    )}
-    <Dashboard client:load />
-  </div>
+  {error && (
+    <div class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded mb-4">
+      ⚠️ Errore: {error.message}
+    </div>
+  )}
+  <Dashboard client:load />
 </Layout>
