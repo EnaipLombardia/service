@@ -29,9 +29,27 @@ export default function Dashboard() {
   const [ocrResult, setOcrResult] = useState(null);
   const [toast, setToast] = useState(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
+  // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
-    loadDashboardData();
+    const checkAuth = async () => {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error || !data?.user) {
+          window.location.href = '/login';
+          return;
+        }
+        setUser(data.user);
+        setAuthLoading(false);
+        loadDashboardData();
+      } catch (err) {
+        console.error('❌ Errore verifica login:', err);
+        window.location.href = '/login';
+      }
+    };
+    checkAuth();
   }, []);
 
   async function loadDashboardData() {
@@ -53,7 +71,6 @@ export default function Dashboard() {
     }
   }
 
-  // Gestisce la scansione del codice a barre
   async function handleScan(code) {
     setScannedCode(code);
     setScannedAsset(null);
@@ -95,7 +112,6 @@ export default function Dashboard() {
     }
   }
 
-  // Gestisce la scansione OCR
   async function handleOcrDetected(text) {
     const seriale = text.split(' ')[0] || text;
     setOcrResult(seriale);
@@ -163,9 +179,27 @@ export default function Dashboard() {
     }
   }
 
+  // Colori ENAIP
+  const enaipGreen = '#006a4e';
+  const enaipBrown = '#8b5a2b';
+
+  if (authLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <p className="text-gray-600 dark:text-gray-400">Verifica accesso in corso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      {/* Toast Notifications */}
       {toast && (
         <Toast 
           message={toast.message} 
@@ -175,21 +209,23 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h1 className="text-2xl font-bold">📦 Asset ENAIP Lombardia</h1>
+        <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowScanner(!showScanner)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              showScanner ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              showScanner ? 'text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={showScanner ? { backgroundColor: enaipGreen } : {}}
           >
             {showScanner ? '📷 Nascondi Scanner' : '📷 Scanner Codici'}
           </button>
           <button
             onClick={() => setShowOcr(!showOcr)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              showOcr ? 'bg-purple-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              showOcr ? 'text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={showOcr ? { backgroundColor: enaipBrown } : {}}
           >
             {showOcr ? '📷 Nascondi OCR' : '📷 Leggi seriale'}
           </button>
@@ -197,20 +233,18 @@ export default function Dashboard() {
           <button
             onClick={() => setNotificationsEnabled(!notificationsEnabled)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              notificationsEnabled 
-                ? 'bg-green-500 text-white hover:bg-green-600' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              notificationsEnabled ? 'text-white hover:opacity-80' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={notificationsEnabled ? { backgroundColor: enaipGreen } : {}}
           >
             {notificationsEnabled ? '🔔 On' : '🔕 Off'}
           </button>
         </div>
       </div>
       
-      {/* Scanner Codici a Barre */}
       {showScanner && (
         <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">🔍 Scansiona un asset</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">🔍 Scansiona un asset</h2>
           <Scanner onDetected={handleScan} />
           
           {scannedCode && !scannedAsset && (
@@ -228,7 +262,8 @@ export default function Dashboard() {
                 <br />
                 <span className="text-sm">Seriale: {scannedAsset.numero_serie}</span>
                 <button 
-                  className="ml-3 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors"
+                  className="ml-3 text-white px-3 py-1 rounded text-sm transition-colors hover:opacity-80"
+                  style={{ backgroundColor: enaipGreen }}
                   onClick={() => goToAssetDetail(scannedAsset.id)}
                 >
                   Vedi dettaglio
@@ -239,7 +274,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Scanner OCR (Modal) */}
       {showOcr && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="max-w-md w-full">
@@ -266,7 +300,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Ricerca rapida */}
       <div className="mb-4 relative">
         <form onSubmit={handleSearch} className="flex gap-2">
           <input
@@ -274,11 +307,13 @@ export default function Dashboard() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="🔍 Cerca per seriale, marca, modello, tipo o codice..."
-            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors"
+            style={{ '--tw-ring-color': enaipGreen }}
           />
           <button 
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+            className="text-white px-4 py-2 rounded transition-colors hover:opacity-80"
+            style={{ backgroundColor: enaipGreen }}
           >
             Cerca
           </button>
@@ -289,17 +324,16 @@ export default function Dashboard() {
                 setSearchTerm('');
                 setSearchResults([]);
               }}
-              className="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+              className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
             >
               Cancella
             </button>
           )}
         </form>
 
-        {/* Risultati ricerca */}
         {searchResults.length > 0 && (
           <div className="mt-3 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
               Risultati della ricerca ({searchResults.length})
             </h3>
             <ul className="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto">
@@ -311,7 +345,7 @@ export default function Dashboard() {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="font-semibold">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                       <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
                       <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
                     </div>
@@ -334,7 +368,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Statistiche */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
           <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
@@ -368,61 +401,66 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Pulsanti azione */}
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           ➕ Nuovo Asset
         </a>
         <a
           href="/censimento"
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipBrown }}
         >
           📋 Censimento Rapido
         </a>
         <a
           href="/statistiche"
-          className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           📊 Statistiche
         </a>
         <a
           href="/storico"
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipBrown }}
         >
           📜 Storico Generale
         </a>
         <a
           href="/admin"
-          className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           📊 Admin
         </a>
         <a
           href="/audit"
-          className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipBrown }}
         >
           📜 Audit
         </a>
         <a
           href="/scadenze"
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           🔔 Scadenze
         </a>
         {nextCode && (
-          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center">
+          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-700 dark:text-gray-300">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
           </span>
         )}
       </div>
 
-      {/* Asset recenti */}
       <div>
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">📋 Ultimi asset inseriti</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {recentAssets.length > 0 && `Mostrando ${recentAssets.length} asset`}
           </span>
@@ -440,7 +478,8 @@ export default function Dashboard() {
             <p className="text-gray-500 dark:text-gray-400">📭 Nessun asset inserito. Inizia a censire!</p>
             <a 
               href="/nuovo-asset" 
-              className="mt-3 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+              className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+              style={{ backgroundColor: enaipGreen }}
             >
               ➕ Inserisci il primo asset
             </a>
@@ -455,7 +494,7 @@ export default function Dashboard() {
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <div>
-                    <span className="font-semibold">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                     <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
                     <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
                   </div>
@@ -479,9 +518,8 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Footer */}
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
-        <p>ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
+        <p className="text-[#8b5a2b] dark:text-[#c49a6c] font-medium">ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
         <p className="text-xs mt-1">
           {notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}
         </p>
