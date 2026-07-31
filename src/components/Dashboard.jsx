@@ -195,7 +195,7 @@ export default function Dashboard() {
             onClick={() => setNotificationsEnabled(!notificationsEnabled)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
               notificationsEnabled 
-                ? 'bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white' 
+                ? 'bg-[#006a4e] text-white hover:bg-[#005a3e]' 
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
@@ -360,55 +360,58 @@ export default function Dashboard() {
         </div>
       </div>
 
-     <div className="flex flex-wrap gap-2 mb-6">
-  <a 
-    href="/nuovo-asset"
-    className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    ➕ Nuovo Asset
-  </a>
-  <a
-    href="/censimento"
-    className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    📋 Censimento Rapido
-  </a>
-  <a
-    href="/statistiche"
-    className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    📊 Statistiche de sto cazzo
-  </a>
-  <a
-    href="/storico"
-    className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    📜 Storico Generale
-  </a>
-  <a
-    href="/admin"
-    className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    📊 Admin
-  </a>
-  <a
-    href="/audit"
-    className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    📜 Audit
-  </a>
-  <a
-    href="/scadenze"
-    className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
-  >
-    🔔 Scadenze
-  </a>
-  {nextCode && (
-    <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-700 dark:text-gray-300">
-      🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
-    </span>
-  )}
-</div>
+      {/* ============================================================
+          PULSANTI CON SFONDO CORRETTO - VERDE E MARRONE ENAIP
+          ============================================================ */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <a 
+          href="/nuovo-asset"
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          ➕ Nuovo Asset
+        </a>
+        <a
+          href="/censimento"
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          📋 Censimento Rapido
+        </a>
+        <a
+          href="/statistiche"
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          📊 Statistiche
+        </a>
+        <a
+          href="/storico"
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          📜 Storico Generale
+        </a>
+        <a
+          href="/admin"
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          📊 Admin
+        </a>
+        <a
+          href="/audit"
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          📜 Audit
+        </a>
+        <a
+          href="/scadenze"
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+        >
+          🔔 Scadenze
+        </a>
+        {nextCode && (
+          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-700 dark:text-gray-300">
+            🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
+          </span>
+        )}
+      </div>
 
       <div>
         <div className="flex justify-between items-center mb-2">
