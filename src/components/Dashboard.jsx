@@ -29,9 +29,29 @@ export default function Dashboard() {
   const [ocrResult, setOcrResult] = useState(null);
   const [toast, setToast] = useState(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
+  // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
-    loadDashboardData();
+    const checkAuth = async () => {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error || !data?.user) {
+          // Se non loggato, reindirizza al login
+          window.location.href = '/login';
+          return;
+        }
+        setUser(data.user);
+        setAuthLoading(false);
+        // Carica i dati solo dopo il login
+        loadDashboardData();
+      } catch (err) {
+        console.error('❌ Errore verifica login:', err);
+        window.location.href = '/login';
+      }
+    };
+    checkAuth();
   }, []);
 
   async function loadDashboardData() {
@@ -161,6 +181,23 @@ export default function Dashboard() {
     }
   }
 
+  // 🔥 MOSTRA CARICAMENTO MENTRE VERIFICA IL LOGIN 🔥
+  if (authLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <p className="text-gray-600 dark:text-gray-400">Verifica accesso in corso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Se non c'è utente, non mostrare nulla (il redirect è già partito)
+  if (!user) {
+    return null;
+  }
+
   // Colori ENAIP
   const enaipGreen = '#006a4e';
   const enaipBrown = '#8b5a2b';
@@ -176,7 +213,7 @@ export default function Dashboard() {
       )}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h1 className="text-2xl font-bold text-enaip-brown dark:text-enaip-brown-light">📦 Asset ENAIP Lombardia</h1>
+        <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowScanner(!showScanner)}
@@ -368,9 +405,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ============================================================
-          PULSANTI CON COLORI ENAIP - STYLE INLINE
-          ============================================================ */}
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
@@ -489,7 +523,7 @@ export default function Dashboard() {
       </div>
 
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
-        <p className="text-enaip-brown dark:text-enaip-brown-light font-medium">ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
+        <p className="text-[#8b5a2b] dark:text-[#c49a6c] font-medium">ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
         <p className="text-xs mt-1">
           {notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}
         </p>
