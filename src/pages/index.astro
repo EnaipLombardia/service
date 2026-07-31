@@ -3,12 +3,11 @@ import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// 🔥 PROTEZIONE LOGIN CON SESSIONSTORAGE 🔥
+// 🔥 PROTEZIONE LOGIN SOLO CON SUPABASE 🔥
 let user = null;
 let error = null;
 
 try {
-  // Prima prova a prendere l'utente da Supabase
   const { data, error: authError } = await supabase.auth.getUser();
   if (authError) {
     console.error('❌ Errore verifica login:', authError);
@@ -19,17 +18,6 @@ try {
 } catch (err) {
   console.error('❌ Errore imprevisto:', err);
   error = err;
-}
-
-// Se non loggato ma c'è sessionStorage, usalo
-const sessionUser = sessionStorage.getItem('user');
-if (!user && sessionUser) {
-  try {
-    user = JSON.parse(sessionUser);
-    console.log('✅ Utente da sessionStorage:', user?.email);
-  } catch (e) {
-    console.error('❌ Errore parsing sessionStorage:', e);
-  }
 }
 
 // Se non loggato, reindirizza al login
