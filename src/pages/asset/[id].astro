@@ -2,6 +2,12 @@
 import Layout from '../../layouts/Layout.astro';
 import { supabase } from '../../lib/supabaseClient';
 
+// Verifica se l'utente è loggato
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) {
+  return Astro.redirect('/login');
+}
+
 export async function getStaticPaths() {
   const { data } = await supabase.from('asset').select('id');
   return data?.map(asset => ({ params: { id: asset.id } })) || [];
@@ -25,7 +31,7 @@ if (asset) {
   history = data || [];
 }
 
-// Ottieni l'assegnazione corrente (se presente)
+// Ottieni l'assegnazione corrente
 let currentAssignment = null;
 if (asset) {
   const { data } = await supabase
@@ -42,7 +48,7 @@ if (asset) {
   {asset ? (
     <div class="p-4 max-w-4xl mx-auto">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h1 class="text-2xl font-bold break-all">
+        <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c] break-all">
           {asset.numero_serie || asset.codice_univoco || 'Asset'}
         </h1>
         <div class="flex flex-wrap gap-2">
@@ -72,6 +78,7 @@ if (asset) {
           <div><strong>Data Acquisto:</strong> {asset.data_acquisto ? new Date(asset.data_acquisto).toLocaleDateString('it-IT') : 'N/A'}</div>
           <div><strong>Costo:</strong> {asset.costo_acquisto ? `€${asset.costo_acquisto}` : 'N/A'}</div>
           <div><strong>Scadenza Garanzia:</strong> {asset.scadenza_garanzia ? new Date(asset.scadenza_garanzia).toLocaleDateString('it-IT') : 'N/A'}</div>
+          <div><strong>Assegnato a:</strong> {asset.assegnato_a || 'Nessuno'}</div>
         </div>
         {asset.note && (
           <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -99,7 +106,7 @@ if (asset) {
       )}
 
       <!-- Storico Assegnazioni -->
-      <h2 class="text-xl font-bold mb-3">📜 Storico Assegnazioni</h2>
+      <h2 class="text-xl font-bold text-[#8b5a2b] dark:text-[#c49a6c] mb-3">📜 Storico Assegnazioni</h2>
       {history.length === 0 ? (
         <p class="text-gray-500 dark:text-gray-400">Nessuna assegnazione registrata.</p>
       ) : (
@@ -108,11 +115,11 @@ if (asset) {
             <table class="w-full">
               <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                  <th class="p-3 text-left text-sm font-semibold">Dipendente</th>
-                  <th class="p-3 text-left text-sm font-semibold">Email</th>
-                  <th class="p-3 text-left text-sm font-semibold">Data Inizio</th>
-                  <th class="p-3 text-left text-sm font-semibold">Data Fine</th>
-                  <th class="p-3 text-left text-sm font-semibold">Motivo</th>
+                  <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Dipendente</th>
+                  <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Email</th>
+                  <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Data Inizio</th>
+                  <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Data Fine</th>
+                  <th class="p-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Motivo</th>
                 </tr>
               </thead>
               <tbody>
@@ -136,28 +143,34 @@ if (asset) {
 
       <!-- Pulsanti Azione -->
       <div class="flex flex-wrap gap-2">
-        <a href="/" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
+        <a href="/" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-white px-4 py-2 rounded transition-colors">
           ← Torna indietro
         </a>
         <a 
           href={`/assegna?id=${asset.id}`}
-          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+          class="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded transition-colors"
         >
           🔄 Assegna
         </a>
         {asset.stato === 'Assegnato' && (
           <a 
             href={`/restituisci?id=${asset.id}`}
-            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition-colors"
           >
             📤 Restituisci
           </a>
         )}
         <a 
           href={`/stampa-etichette?id=${asset.id}`}
-          class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors"
+          class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded transition-colors"
         >
           🏷️ Stampa Etichetta
+        </a>
+        <a 
+          href={`/asset/modifica/${asset.id}`}
+          class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+        >
+          ✏️ Modifica
         </a>
       </div>
     </div>
