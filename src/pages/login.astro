@@ -34,70 +34,75 @@ import { supabase } from '../lib/supabaseClient';
           />
         </div>
 
-      <button
-  type="submit"
-  id="loginBtn"
-  style="background-color: #006a4e; color: white;"
-  class="w-full hover:opacity-80 font-medium py-2 px-4 rounded transition-colors"
->
-  Accedi
-</button>
+        <button
+          type="submit"
+          id="loginBtn"
+          style="background-color: #006a4e; color: white;"
+          class="w-full hover:opacity-80 font-medium py-2 px-4 rounded transition-colors"
+        >
+          Accedi
+        </button>
 
         <div id="messaggio" class="mt-3 hidden"></div>
       </form>
     </div>
   </div>
-<script>
-  import { supabase } from '../lib/supabaseClient';
 
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const messaggio = document.getElementById('messaggio');
-    const loginBtn = document.getElementById('loginBtn');
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const messaggio = document.getElementById('messaggio');
+      const loginBtn = document.getElementById('loginBtn');
 
-    if (!email || !password) {
-      messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-      messaggio.textContent = '❌ Inserisci email e password';
-      return;
-    }
+      if (!email || !password) {
+        messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '❌ Inserisci email e password';
+        return;
+      }
 
-    loginBtn.disabled = true;
-    loginBtn.textContent = '⏳ Caricamento...';
+      loginBtn.disabled = true;
+      loginBtn.textContent = '⏳ Caricamento...';
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
+      try {
+        // Usa l'import dinamico per il client Supabase
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabase = createClient(
+          'https://bpjdjigfworwvyrgwsqh.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
+        );
 
-      if (error) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+          messaggio.textContent = '❌ ' + error.message;
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Accedi';
+          return;
+        }
+
+        if (data?.user) {
+          messaggio.className = 'mt-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
+          messaggio.textContent = '✅ Login effettuato! Reindirizzamento...';
+          
+          // 🔥 Reindirizzamento server-side
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        }
+
+      } catch (error) {
         messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
         messaggio.textContent = '❌ ' + error.message;
         loginBtn.disabled = false;
         loginBtn.textContent = 'Accedi';
-        return;
       }
-
-      if (data?.user) {
-        messaggio.className = 'mt-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
-        messaggio.textContent = '✅ Login effettuato! Reindirizzamento...';
-        
-        // 🔥 REINDIRIZZAMENTO CLIENT-SIDE 🔥
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
-      }
-
-    } catch (error) {
-      messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-      messaggio.textContent = '❌ ' + error.message;
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'Accedi';
-    }
-  });
-</script>
- 
+    });
+  </script>
 </Layout>
