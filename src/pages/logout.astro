@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
 ---
 
 <Layout title="Logout">
@@ -11,13 +12,10 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
+    import { supabase } from '../lib/supabaseClient';
+
     async function doLogout() {
       try {
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
-        const supabase = createClient(
-          'https://bpjdjigfworwvyrgwsqh.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
-        );
         await supabase.auth.signOut();
         window.location.href = '/login';
       } catch (e) {
