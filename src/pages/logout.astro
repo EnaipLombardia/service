@@ -1,0 +1,15 @@
+---
+import { supabase } from '../lib/supabaseClient';
+
+// 🔥 Esegui il logout 🔥
+await supabase.auth.signOut();
+
+// Reindirizza alla pagina di login
+return Astro.redirect('/login');
+---
+
+<html>
+  <body>
+    <p>Logout in corso...</p>
+  </body>
+</html>
