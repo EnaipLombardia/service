@@ -3,5 +3,5 @@ import react from '@astrojs/react';
 
 export default defineConfig({
   integrations: [react()],
- 
+  output: 'server', // 🔥 SERVER RENDERING per mantenere la sessione
 });
