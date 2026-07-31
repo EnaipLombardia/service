@@ -191,7 +191,7 @@ const isHome = Astro.url.pathname === '/';
             />
           </div>
           <div class="flex items-center gap-3">
-            <!-- 🔥 PULSANTI LOGIN/LOGOUT (GESTITI DA JS) 🔥 -->
+            <!-- 🔥 PULSANTI LOGIN/LOGOUT 🔥 -->
             <div id="auth-buttons">
               <a
                 href="/login"
@@ -223,19 +223,14 @@ const isHome = Astro.url.pathname === '/';
     </main>
 
     <script>
-      // 🔥 GESTIONE STATO LOGIN (CLIENT-SIDE) 🔥
+      // 🔥 IMPORTA DA SUPABASE CLIENT 🔥
+      import { supabase } from '../lib/supabaseClient';
+
       async function updateAuthButtons() {
         const loginBtn = document.getElementById('login-btn');
         const logoutBtn = document.getElementById('logout-btn');
         
         try {
-          // Usa il client Supabase da CDN
-          const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
-          const supabase = createClient(
-            'https://bpjdjigfworwvyrgwsqh.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
-          );
-          
           const { data: { user } } = await supabase.auth.getUser();
           
           if (user) {
@@ -252,13 +247,8 @@ const isHome = Astro.url.pathname === '/';
         }
       }
 
-      // Esegui al caricamento della pagina
       document.addEventListener('DOMContentLoaded', updateAuthButtons);
-      
-      // Riesegui ogni volta che la pagina cambia (per le SPA)
-      if (window.addEventListener) {
-        window.addEventListener('pageshow', updateAuthButtons);
-      }
+      window.addEventListener('pageshow', updateAuthButtons);
 
       // Toggle tema
       const toggle = document.getElementById('themeToggle');
