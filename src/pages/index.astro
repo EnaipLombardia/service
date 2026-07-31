@@ -3,13 +3,51 @@ import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 
-// 🔥 PROTEZIONE LOGIN 🔥
-const { data: { user } } = await supabase.auth.getUser();
+// 🔥 PROTEZIONE LOGIN CON SESSIONSTORAGE 🔥
+let user = null;
+let error = null;
+
+try {
+  // Prima prova a prendere l'utente da Supabase
+  const { data, error: authError } = await supabase.auth.getUser();
+  if (authError) {
+    console.error('❌ Errore verifica login:', authError);
+    error = authError;
+  } else {
+    user = data?.user;
+  }
+} catch (err) {
+  console.error('❌ Errore imprevisto:', err);
+  error = err;
+}
+
+// Se non loggato ma c'è sessionStorage, usalo
+const sessionUser = sessionStorage.getItem('user');
+if (!user && sessionUser) {
+  try {
+    user = JSON.parse(sessionUser);
+    console.log('✅ Utente da sessionStorage:', user?.email);
+  } catch (e) {
+    console.error('❌ Errore parsing sessionStorage:', e);
+  }
+}
+
+// Se non loggato, reindirizza al login
 if (!user) {
+  console.log('🔒 Utente non loggato, reindirizzamento a /login');
   return Astro.redirect('/login');
 }
+
+console.log('✅ Utente loggato:', user?.email);
 ---
 
 <Layout title="Asset ENAIP">
-  <Dashboard client:load />
+  <div class="p-4">
+    {error && (
+      <div class="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded mb-4">
+        ⚠️ Errore: {error.message}
+      </div>
+    )}
+    <Dashboard client:load />
+  </div>
 </Layout>
