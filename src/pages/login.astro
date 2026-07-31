@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { supabase } from '../lib/supabaseClient';
 ---
 
 <Layout title="Login">
@@ -67,12 +66,15 @@ import { supabase } from '../lib/supabaseClient';
       loginBtn.textContent = '⏳ Caricamento...';
 
       try {
-        // Usa l'import dinamico per il client Supabase
-        const { createClient } = await import('@supabase/supabase-js');
+        // 🔥 CLIENT SUPABASE DA CDN (DIRETTO) 🔥
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+        
         const supabase = createClient(
           'https://bpjdjigfworwvyrgwsqh.supabase.co',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
         );
+
+        console.log('🔍 Tentativo login per:', email);
 
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email,
@@ -80,6 +82,7 @@ import { supabase } from '../lib/supabaseClient';
         });
 
         if (error) {
+          console.error('❌ Errore login:', error);
           messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
           messaggio.textContent = '❌ ' + error.message;
           loginBtn.disabled = false;
@@ -88,18 +91,19 @@ import { supabase } from '../lib/supabaseClient';
         }
 
         if (data?.user) {
+          console.log('✅ Login riuscito:', data.user.email);
           messaggio.className = 'mt-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
           messaggio.textContent = '✅ Login effettuato! Reindirizzamento...';
           
-          // 🔥 Reindirizzamento server-side
           setTimeout(() => {
             window.location.href = '/';
-          }, 1000);
+          }, 1500);
         }
 
       } catch (error) {
+        console.error('❌ Errore imprevisto:', error);
         messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
-        messaggio.textContent = '❌ ' + error.message;
+        messaggio.textContent = '❌ ' + (error.message || 'Errore imprevisto');
         loginBtn.disabled = false;
         loginBtn.textContent = 'Accedi';
       }
