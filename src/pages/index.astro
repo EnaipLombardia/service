@@ -1,16 +1,11 @@
 ---
 import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
-import { supabase } from '../lib/supabaseClient';
-
-// 🔥 PROTEZIONE LOGIN LATO SERVER (ORA FUNZIONA CON output: 'server') 🔥
-const { data: { user } } = await supabase.auth.getUser();
-
-if (!user) {
-  return Astro.redirect('/login');
-}
+import ProtectedRoute from '../components/ProtectedRoute';
 ---
 
 <Layout title="Asset ENAIP">
-  <Dashboard client:load />
+  <ProtectedRoute client:load>
+    <Dashboard client:load />
+  </ProtectedRoute>
 </Layout>
