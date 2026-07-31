@@ -2,11 +2,9 @@
 export interface Props {
   title: string;
 }
-import { supabase } from '../lib/supabaseClient'; // 👈 AGGIUNGI QUESTA RIGA
+
 const { title } = Astro.props;
 const isHome = Astro.url.pathname === '/';
-const { data: { user } } = await supabase.auth.getUser();
-const isLoggedIn = !!user;
 ---
 
 <!DOCTYPE html>
@@ -26,6 +24,7 @@ const isLoggedIn = !!user;
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
     
     <style>
+      /* Transizioni per il tema */
       * {
         transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       }
@@ -193,21 +192,23 @@ const isLoggedIn = !!user;
             />
           </div>
           <div class="flex items-center gap-3">
-            {isLoggedIn ? (
-              <a
-                href="/logout"
-                class="bg-red-500/20 hover:bg-red-500/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
-              >
-                🚪 Logout
-              </a>
-            ) : (
+            <!-- 🔥 GESTIONE LOGIN/LOGOUT CLIENT-SIDE 🔥 -->
+            <div id="auth-buttons">
               <a
                 href="/login"
+                id="login-btn"
                 class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
               >
                 🔑 Accedi
               </a>
-            )}
+              <a
+                href="/logout"
+                id="logout-btn"
+                class="bg-red-500/20 hover:bg-red-500/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors hidden"
+              >
+                🚪 Logout
+              </a>
+            </div>
             <button 
               id="themeToggle"
               class="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
@@ -223,6 +224,45 @@ const isLoggedIn = !!user;
     </main>
 
     <script>
+      // 🔥 GESTIONE STATO LOGIN (CLIENT-SIDE) 🔥
+      async function updateAuthButtons() {
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        
+        try {
+          // Usa supabase dal client
+          const { createClient } = await import('@supabase/supabase-js');
+          const supabase = createClient(
+            'https://bpjdjigfworwvyrgwsqh.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
+          );
+          
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user) {
+            loginBtn.classList.add('hidden');
+            logoutBtn.classList.remove('hidden');
+          } else {
+            loginBtn.classList.remove('hidden');
+            logoutBtn.classList.add('hidden');
+          }
+        } catch (error) {
+          console.log('Errore verifica login:', error);
+          // In caso di errore, mostra il pulsante login
+          loginBtn.classList.remove('hidden');
+          logoutBtn.classList.add('hidden');
+        }
+      }
+
+      // Esegui al caricamento della pagina
+      document.addEventListener('DOMContentLoaded', updateAuthButtons);
+      
+      // Riesegui ogni volta che la pagina cambia (per le SPA)
+      if (window.addEventListener) {
+        window.addEventListener('pageshow', updateAuthButtons);
+      }
+
+      // Toggle tema
       const toggle = document.getElementById('themeToggle');
       const icon = document.getElementById('themeIcon');
       
