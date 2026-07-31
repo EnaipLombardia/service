@@ -5,6 +5,8 @@ export interface Props {
 
 const { title } = Astro.props;
 const isHome = Astro.url.pathname === '/';
+const { data: { user } } = await supabase.auth.getUser();
+const isLoggedIn = !!user;
 ---
 
 <!DOCTYPE html>
@@ -178,7 +180,7 @@ const isHome = Astro.url.pathname === '/';
             {!isHome && (
               <a 
                 href="/" 
-                class="text-white hover:text-green-200 font-medium text-sm bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+                class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-medium text-sm px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
               >
                 <span>←</span> Dashboard
               </a>
@@ -190,13 +192,30 @@ const isHome = Astro.url.pathname === '/';
               onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-lg font-bold text-white\'>ENAIP</span>';"
             />
           </div>
-          <button 
-            id="themeToggle"
-            class="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
-            aria-label="Cambia tema"
-          >
-            <span id="themeIcon">🌙</span>
-          </button>
+          <div class="flex items-center gap-3">
+            {isLoggedIn ? (
+              <a
+                href="/logout"
+                class="bg-red-500/20 hover:bg-red-500/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+              >
+                🚪 Logout
+              </a>
+            ) : (
+              <a
+                href="/login"
+                class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+              >
+                🔑 Accedi
+              </a>
+            )}
+            <button 
+              id="themeToggle"
+              class="p-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors"
+              aria-label="Cambia tema"
+            >
+              <span id="themeIcon">🌙</span>
+            </button>
+          </div>
         </div>
       </div>
       
