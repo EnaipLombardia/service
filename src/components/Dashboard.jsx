@@ -161,6 +161,10 @@ export default function Dashboard() {
     }
   }
 
+  // Colori ENAIP
+  const enaipGreen = '#006a4e';
+  const enaipBrown = '#8b5a2b';
+
   return (
     <div className="p-4 max-w-6xl mx-auto">
       {toast && (
@@ -177,16 +181,18 @@ export default function Dashboard() {
           <button
             onClick={() => setShowScanner(!showScanner)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              showScanner ? 'bg-enaip-green text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              showScanner ? 'text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={showScanner ? { backgroundColor: enaipGreen } : {}}
           >
             {showScanner ? '📷 Nascondi Scanner' : '📷 Scanner Codici'}
           </button>
           <button
             onClick={() => setShowOcr(!showOcr)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              showOcr ? 'bg-enaip-brown text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              showOcr ? 'text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={showOcr ? { backgroundColor: enaipBrown } : {}}
           >
             {showOcr ? '📷 Nascondi OCR' : '📷 Leggi seriale'}
           </button>
@@ -194,10 +200,9 @@ export default function Dashboard() {
           <button
             onClick={() => setNotificationsEnabled(!notificationsEnabled)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              notificationsEnabled 
-                ? 'bg-enaip-green text-white hover:bg-enaip-green/80' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              notificationsEnabled ? 'text-white hover:opacity-80' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={notificationsEnabled ? { backgroundColor: enaipGreen } : {}}
           >
             {notificationsEnabled ? '🔔 On' : '🔕 Off'}
           </button>
@@ -224,7 +229,8 @@ export default function Dashboard() {
                 <br />
                 <span className="text-sm">Seriale: {scannedAsset.numero_serie}</span>
                 <button 
-                  className="ml-3 bg-enaip-green hover:bg-enaip-green/80 text-white px-3 py-1 rounded text-sm transition-colors"
+                  className="ml-3 text-white px-3 py-1 rounded text-sm transition-colors hover:opacity-80"
+                  style={{ backgroundColor: enaipGreen }}
                   onClick={() => goToAssetDetail(scannedAsset.id)}
                 >
                   Vedi dettaglio
@@ -268,11 +274,13 @@ export default function Dashboard() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="🔍 Cerca per seriale, marca, modello, tipo o codice..."
-            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-enaip-green transition-colors"
+            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors"
+            style={{ '--tw-ring-color': enaipGreen }}
           />
           <button 
             type="submit"
-            className="bg-enaip-green hover:bg-enaip-green/80 text-white px-4 py-2 rounded transition-colors"
+            className="text-white px-4 py-2 rounded transition-colors hover:opacity-80"
+            style={{ backgroundColor: enaipGreen }}
           >
             Cerca
           </button>
@@ -361,48 +369,55 @@ export default function Dashboard() {
       </div>
 
       {/* ============================================================
-          PULSANTI CON COLORI ENAIP (VERDE E MARRONE)
+          PULSANTI CON COLORI ENAIP - STYLE INLINE
           ============================================================ */}
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
-          className="bg-enaip-green hover:bg-enaip-green/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           ➕ Nuovo Asset
         </a>
         <a
           href="/censimento"
-          className="bg-enaip-brown hover:bg-enaip-brown/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipBrown }}
         >
           📋 Censimento Rapido
         </a>
         <a
           href="/statistiche"
-          className="bg-enaip-green hover:bg-enaip-green/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           📊 Statistiche
         </a>
         <a
           href="/storico"
-          className="bg-enaip-brown hover:bg-enaip-brown/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipBrown }}
         >
           📜 Storico Generale
         </a>
         <a
           href="/admin"
-          className="bg-enaip-green hover:bg-enaip-green/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           📊 Admin
         </a>
         <a
           href="/audit"
-          className="bg-enaip-brown hover:bg-enaip-brown/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipBrown }}
         >
           📜 Audit
         </a>
         <a
           href="/scadenze"
-          className="bg-enaip-green hover:bg-enaip-green/80 text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: enaipGreen }}
         >
           🔔 Scadenze
         </a>
@@ -433,7 +448,8 @@ export default function Dashboard() {
             <p className="text-gray-500 dark:text-gray-400">📭 Nessun asset inserito. Inizia a censire!</p>
             <a 
               href="/nuovo-asset" 
-              className="mt-3 inline-block bg-enaip-green hover:bg-enaip-green/80 text-white px-4 py-2 rounded transition-colors"
+              className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+              style={{ backgroundColor: enaipGreen }}
             >
               ➕ Inserisci il primo asset
             </a>
