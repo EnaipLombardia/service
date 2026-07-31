@@ -377,7 +377,7 @@ export default function Dashboard() {
     href="/statistiche"
     className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
   >
-    📊 Statistiche
+    📊 Statistiche de sto cazzo
   </a>
   <a
     href="/storico"
