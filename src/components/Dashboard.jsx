@@ -464,8 +464,7 @@ export default function Dashboard() {
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+<h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>          <span className="text-sm text-gray-500 dark:text-gray-400">
             {recentAssets.length > 0 && `Mostrando ${recentAssets.length} asset`}
           </span>
         </div>
