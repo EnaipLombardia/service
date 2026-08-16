@@ -1,8 +1,111 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Login from '../components/Login.jsx';
 ---
 
 <Layout title="Login">
-  <Login client:load />
+  <div class="min-h-[80vh] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 max-w-md w-full">
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">🔐 Accesso</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">Accedi per gestire gli asset ENAIP</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
+            placeholder="nome.cognome@enaiplombardia.it"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="loginBtn"
+          style="background-color: #006a4e; color: white;"
+          class="w-full hover:opacity-80 font-medium py-2 px-4 rounded transition-colors"
+        >
+          Accedi
+        </button>
+
+        <div id="messaggio" class="mt-3 hidden"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 🔥 LOGIN CON JAVASCRIPT PURO (NESSUN IMPORT) 🔥
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const messaggio = document.getElementById('messaggio');
+      const loginBtn = document.getElementById('loginBtn');
+
+      if (!email || !password) {
+        messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '❌ Inserisci email e password';
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = '⏳ Caricamento...';
+
+      try {
+        // 🔥 CLIENT SUPABASE DA CDN 🔥
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+        
+        const supabase = createClient(
+          'https://bpjdjigfworwvyrgwsqh.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
+        );
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          console.error('❌ Errore login:', error);
+          messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+          messaggio.textContent = '❌ ' + error.message;
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Accedi';
+          return;
+        }
+
+        if (data?.user) {
+          console.log('✅ Login riuscito:', data.user.email);
+          messaggio.className = 'mt-3 p-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded';
+          messaggio.textContent = '✅ Login effettuato! Reindirizzamento...';
+          
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1500);
+        }
+
+      } catch (error) {
+        console.error('❌ Errore imprevisto:', error);
+        messaggio.className = 'mt-3 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '❌ ' + (error.message || 'Errore imprevisto');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Accedi';
+      }
+    });
+  </script>
 </Layout>
