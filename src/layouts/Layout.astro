@@ -14,71 +14,40 @@ const isHome = Astro.url.pathname === '/';
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>{title}</title>
     
-    <!-- PWA Meta Tags -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#006a4e" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
-    <!-- Tailwind CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
     
     <style>
-      * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      }
-      
-      .dark {
-        background-color: #0f172a;
-        color: #f1f5f9;
-      }
-      
+      * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+      .dark { background-color: #0f172a; color: #f1f5f9; }
       .dark .bg-white { background-color: #1e293b; }
       .dark .bg-gray-50 { background-color: #1e293b; }
       .dark .bg-gray-100 { background-color: #334155; }
       .dark .bg-gray-200 { background-color: #334155; }
       .dark .bg-gray-300 { background-color: #475569; }
-      
       .dark .border-gray-200 { border-color: #334155; }
       .dark .border-gray-300 { border-color: #475569; }
       .dark .border-gray-100 { border-color: #1e293b; }
       .dark .divide-y > * + * { border-color: #334155; }
       .dark .border-b { border-color: #334155; }
       .dark .border-t { border-color: #334155; }
-      
       .dark .text-gray-900 { color: #f1f5f9; }
       .dark .text-gray-800 { color: #e2e8f0; }
       .dark .text-gray-700 { color: #cbd5e1; }
       .dark .text-gray-600 { color: #94a3b8; }
       .dark .text-gray-500 { color: #94a3b8; }
       .dark .text-gray-400 { color: #64748b; }
-      
-      .dark input,
-      .dark select,
-      .dark textarea {
-        background-color: #1e293b;
-        color: #f1f5f9;
-        border-color: #475569;
-      }
-      .dark input:focus,
-      .dark select:focus,
-      .dark textarea:focus {
-        border-color: #006a4e;
-        outline: none;
-        ring: 2px solid #006a4e;
-      }
-      .dark input::placeholder,
-      .dark textarea::placeholder {
-        color: #94a3b8;
-      }
-      .dark label {
-        color: #e2e8f0;
-      }
-      
+      .dark input, .dark select, .dark textarea { background-color: #1e293b; color: #f1f5f9; border-color: #475569; }
+      .dark input:focus, .dark select:focus, .dark textarea:focus { border-color: #006a4e; outline: none; ring: 2px solid #006a4e; }
+      .dark input::placeholder, .dark textarea::placeholder { color: #94a3b8; }
+      .dark label { color: #e2e8f0; }
       .dark .shadow { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.5); }
       .dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); }
       .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5); }
-      
       .dark .bg-blue-100 { background-color: #1e3a5f; color: #93c5fd; }
       .dark .bg-green-100 { background-color: #14532d; color: #86efac; }
       .dark .bg-yellow-100 { background-color: #78350f; color: #fcd34d; }
@@ -88,65 +57,22 @@ const isHome = Astro.url.pathname === '/';
       .dark .bg-indigo-100 { background-color: #3730a3; color: #a5b4fc; }
       .dark .bg-teal-100 { background-color: #134e4a; color: #5eead4; }
       .dark .bg-pink-100 { background-color: #831843; color: #f9a8d4; }
-      
       .dark .hover\:bg-gray-50:hover { background-color: #334155; }
       .dark .hover\:bg-gray-100:hover { background-color: #334155; }
       .dark .hover\:bg-gray-200:hover { background-color: #475569; }
-      
-      @keyframes bounceIn {
-        0% { transform: translateY(100px) scale(0.9); opacity: 0; }
-        60% { transform: translateY(-10px) scale(1.02); opacity: 1; }
-        100% { transform: translateY(0) scale(1); opacity: 1; }
-      }
-      .animate-bounce-in {
-        animation: bounceIn 0.5s ease-out;
-      }
-      
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      .animate-pulse-slow {
-        animation: pulse 1.5s ease-in-out infinite;
-      }
-
-      @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-fade-in-up {
-        animation: fadeInUp 0.4s ease-out;
-      }
-      
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 4px;
-      }
-      .dark ::-webkit-scrollbar-track {
-        background: #1e293b;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #94a3b8;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
-      }
-      
-      @media print {
-        .no-print { display: none !important; }
-        .print-only { display: block !important; }
-        body { background: white !important; }
-        .dark { background: white !important; color: black !important; }
-      }
-      
-      @media (max-width: 640px) {
-        .container { padding-left: 0.5rem; padding-right: 0.5rem; }
-      }
+      @keyframes bounceIn { 0% { transform: translateY(100px) scale(0.9); opacity: 0; } 60% { transform: translateY(-10px) scale(1.02); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+      .animate-bounce-in { animation: bounceIn 0.5s ease-out; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+      .animate-pulse-slow { animation: pulse 1.5s ease-in-out infinite; }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+      .dark ::-webkit-scrollbar-track { background: #1e293b; }
+      ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+      @media print { .no-print { display: none !important; } .print-only { display: block !important; } body { background: white !important; } .dark { background: white !important; color: black !important; } }
+      @media (max-width: 640px) { .container { padding-left: 0.5rem; padding-right: 0.5rem; } }
     </style>
     
     <script>
@@ -171,7 +97,7 @@ const isHome = Astro.url.pathname === '/';
   
   <body>
     <main>
-      <!-- Header ENAIP - Verde -->
+      <!-- Header -->
       <div class="bg-[#006a4e] border-b border-[#005a3e] shadow-sm sticky top-0 z-40 no-print">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
           <div class="flex items-center gap-3">
@@ -222,25 +148,18 @@ const isHome = Astro.url.pathname === '/';
     </main>
 
     <script>
-      import { supabase } from '../lib/supabaseClient';
-
       // 🔥 GESTIONE PULSANTI LOGIN/LOGOUT 🔥
-      async function updateAuthButtons() {
+      function updateAuthButtons() {
         const loginBtn = document.getElementById('login-btn');
         const logoutBtn = document.getElementById('logout-btn');
         
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          
-          if (user) {
-            loginBtn.classList.add('hidden');
-            logoutBtn.classList.remove('hidden');
-          } else {
-            loginBtn.classList.remove('hidden');
-            logoutBtn.classList.add('hidden');
-          }
-        } catch (error) {
-          console.log('Errore verifica login:', error);
+        // Usa localStorage per verificare la sessione
+        const hasSession = localStorage.getItem('supabase.auth.token');
+        
+        if (hasSession) {
+          loginBtn.classList.add('hidden');
+          logoutBtn.classList.remove('hidden');
+        } else {
           loginBtn.classList.remove('hidden');
           logoutBtn.classList.add('hidden');
         }
