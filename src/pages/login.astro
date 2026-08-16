@@ -1,23 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Login from '../components/Login.jsx';
 ---
 
 <Layout title="Login">
-  <div id="login-root"></div>
-</layout>
-
-<script>
-  // 🔥 CARICA IL COMPONENTE REACT IN MODO DINAMICO 🔥
-  import { createElement } from 'react';
-  import { createRoot } from 'react-dom/client';
-  import Login from '../components/Login.jsx';
-
-  // Aspetta che il DOM sia pronto
-  document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('login-root');
-    if (container) {
-      const root = createRoot(container);
-      root.render(createElement(Login));
-    }
-  });
-</script>
+  <Login client:load />
+</Layout>
