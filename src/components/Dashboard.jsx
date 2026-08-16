@@ -32,7 +32,6 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -179,7 +178,6 @@ export default function Dashboard() {
     }
   }
 
-  // Colori ENAIP
   const enaipGreen = '#006a4e';
   const enaipBrown = '#8b5a2b';
 
@@ -208,7 +206,6 @@ export default function Dashboard() {
         />
       )}
 
-      {/* TITOLO */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
         <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
         <div className="flex flex-wrap gap-2">
@@ -216,9 +213,10 @@ export default function Dashboard() {
             onClick={() => setShowScanner(!showScanner)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
               showScanner 
-                ? 'bg-[#006a4e] text-white' 
+                ? 'text-white' 
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={showScanner ? { backgroundColor: enaipGreen } : {}}
           >
             {showScanner ? '📷 Nascondi Scanner' : '📷 Scanner Codici'}
           </button>
@@ -226,9 +224,10 @@ export default function Dashboard() {
             onClick={() => setShowOcr(!showOcr)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
               showOcr 
-                ? 'bg-[#8b5a2b] text-white' 
+                ? 'text-white' 
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={showOcr ? { backgroundColor: enaipBrown } : {}}
           >
             {showOcr ? '📷 Nascondi OCR' : '📷 Leggi seriale'}
           </button>
@@ -237,16 +236,16 @@ export default function Dashboard() {
             onClick={() => setNotificationsEnabled(!notificationsEnabled)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
               notificationsEnabled 
-                ? 'bg-[#006a4e] text-white hover:bg-[#005a3e]' 
+                ? 'text-white hover:opacity-80' 
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
+            style={notificationsEnabled ? { backgroundColor: enaipGreen } : {}}
           >
             {notificationsEnabled ? '🔔 On' : '🔕 Off'}
           </button>
         </div>
       </div>
       
-      {/* SCANNER */}
       {showScanner && (
         <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">🔍 Scansiona un asset</h2>
@@ -267,7 +266,8 @@ export default function Dashboard() {
                 <br />
                 <span className="text-sm">Seriale: {scannedAsset.numero_serie}</span>
                 <button 
-                  className="ml-3 bg-[#006a4e] hover:bg-[#005a3e] text-white px-3 py-1 rounded text-sm transition-colors"
+                  className="ml-3 text-white px-3 py-1 rounded text-sm transition-colors hover:opacity-80"
+                  style={{ backgroundColor: enaipGreen }}
                   onClick={() => goToAssetDetail(scannedAsset.id)}
                 >
                   Vedi dettaglio
@@ -278,7 +278,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* OCR */}
       {showOcr && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="max-w-md w-full">
@@ -305,7 +304,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* RICERCA */}
       <div className="mb-4 relative">
         <form onSubmit={handleSearch} className="flex gap-2">
           <input
@@ -317,7 +315,8 @@ export default function Dashboard() {
           />
           <button 
             type="submit"
-            className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded transition-colors"
+            className="text-white px-4 py-2 rounded transition-colors hover:opacity-80"
+            style={{ backgroundColor: enaipGreen }}
           >
             Cerca
           </button>
@@ -372,7 +371,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* STATISTICHE */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
           <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
@@ -406,47 +404,54 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* PULSANTI PRINCIPALI - TUTTI CON SFONDO VISIBILE */}
+      {/* 🔥 PULSANTI CON SFONDO FORZATO CON STILE INLINE 🔥 */}
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#006a4e' }}
         >
           ➕ Nuovo Asset
         </a>
         <a
           href="/censimento"
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#8b5a2b' }}
         >
           📋 Censimento Rapido
         </a>
         <a
           href="/statistiche"
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#006a4e' }}
         >
           📊 Statistiche
         </a>
         <a
           href="/storico"
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#8b5a2b' }}
         >
           📜 Storico Generale
         </a>
         <a
           href="/admin"
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#006a4e' }}
         >
           📊 Admin
         </a>
         <a
           href="/audit"
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#8b5a2b' }}
         >
           📜 Audit
         </a>
         <a
           href="/scadenze"
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded inline-block transition-colors"
+          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#006a4e' }}
         >
           🔔 Scadenze
         </a>
@@ -457,7 +462,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* ULTIMI ASSET */}
       <div>
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>
@@ -478,7 +482,8 @@ export default function Dashboard() {
             <p className="text-gray-500 dark:text-gray-400">📭 Nessun asset inserito. Inizia a censire!</p>
             <a 
               href="/nuovo-asset" 
-              className="mt-3 inline-block bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded transition-colors"
+              className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
+              style={{ backgroundColor: '#006a4e' }}
             >
               ➕ Inserisci il primo asset
             </a>
@@ -517,7 +522,6 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* FOOTER */}
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
         <p className="text-[#8b5a2b] dark:text-[#c49a6c] font-medium">ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
         <p className="text-xs mt-1">
