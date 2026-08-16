@@ -1,13 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { supabase } from '../lib/supabaseClient';
-
-// 🔥 SE L'UTENTE È GIÀ LOGGATO, REINDIRIZZA ALLA DASHBOARD 🔥
-// Questo evita il loop e mostra "Logout" solo quando è davvero loggato
-const { data: { user } } = await supabase.auth.getUser();
-if (user) {
-  return Astro.redirect('/');
-}
 ---
 
 <Layout title="Login">
@@ -56,8 +48,6 @@ if (user) {
   </div>
 
   <script>
-    import { supabase } from '../lib/supabaseClient';
-
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -76,6 +66,13 @@ if (user) {
       loginBtn.textContent = '⏳ Caricamento...';
 
       try {
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+        
+        const supabase = createClient(
+          'https://bpjdjigfworwvyrgwsqh.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29yd3Z5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
+        );
+
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email,
           password: password
