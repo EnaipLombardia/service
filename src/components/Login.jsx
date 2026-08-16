@@ -60,7 +60,7 @@ export default function Login() {
             type="submit"
             disabled={loading}
             style={{ backgroundColor: '#006a4e', color: 'white' }}
-            className="w-full py-2 rounded hover:opacity-80 transition"
+            className="w-full py-2 rounded hover:opacity-80 transition disabled:opacity-50"
           >
             {loading ? '⏳ Caricamento...' : 'Accedi'}
           </button>
