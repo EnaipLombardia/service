@@ -29,10 +29,27 @@ export default function Dashboard() {
   const [ocrResult, setOcrResult] = useState(null);
   const [toast, setToast] = useState(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
-  // 🔥 CARICA I DATI (SENZA PROTEZIONE LOGIN) 🔥
+  // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
-    loadDashboardData();
+    const checkAuth = async () => {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error || !data?.user) {
+          window.location.href = '/login';
+          return;
+        }
+        setUser(data.user);
+        setAuthLoading(false);
+        loadDashboardData();
+      } catch (err) {
+        console.error('❌ Errore verifica login:', err);
+        window.location.href = '/login';
+      }
+    };
+    checkAuth();
   }, []);
 
   async function loadDashboardData() {
@@ -164,6 +181,21 @@ export default function Dashboard() {
 
   const enaipGreen = '#006a4e';
   const enaipBrown = '#8b5a2b';
+
+  if (authLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <p className="text-gray-600 dark:text-gray-400">Verifica accesso in corso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
