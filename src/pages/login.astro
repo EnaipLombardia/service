@@ -1,6 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
+
+// 🔥 SE L'UTENTE È GIÀ LOGGATO, REINDIRIZZA ALLA DASHBOARD 🔥
+// Questo evita il loop e mostra "Logout" solo quando è davvero loggato
+const { data: { user } } = await supabase.auth.getUser();
+if (user) {
+  return Astro.redirect('/');
+}
 ---
 
 <Layout title="Login">
@@ -38,7 +45,7 @@ import { supabase } from '../lib/supabaseClient';
           type="submit"
           id="loginBtn"
           style="background-color: #006a4e; color: white;"
-          class="w-full hover:opacity-80 font-medium py-2 px-4 rounded transition-colors"
+          class="w-full hover:opacity-80 font-medium py-2 px-4 rounded transition-colors disabled:opacity-50"
         >
           Accedi
         </button>
@@ -49,7 +56,6 @@ import { supabase } from '../lib/supabaseClient';
   </div>
 
   <script>
-    // 🔥 USA SUPABASE IMPORTATO DA lib/supabaseClient 🔥
     import { supabase } from '../lib/supabaseClient';
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
