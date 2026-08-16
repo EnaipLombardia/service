@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabaseClient';
 import { getNextAvailableCode } from '../lib/assetFunctions';
 
-// Verifica se l'utente è loggato
+// 🔥 PROTEZIONE LOGIN LATO SERVER 🔥
 const { data: { user } } = await supabase.auth.getUser();
 if (!user) {
   return Astro.redirect('/login');
