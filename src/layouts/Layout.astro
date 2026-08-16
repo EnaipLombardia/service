@@ -222,9 +222,9 @@ const isHome = Astro.url.pathname === '/';
     </main>
 
     <script>
-      // 🔥 GESTIONE PULSANTI LOGIN/LOGOUT 🔥
       import { supabase } from '../lib/supabaseClient';
 
+      // 🔥 GESTIONE PULSANTI LOGIN/LOGOUT 🔥
       async function updateAuthButtons() {
         const loginBtn = document.getElementById('login-btn');
         const logoutBtn = document.getElementById('logout-btn');
