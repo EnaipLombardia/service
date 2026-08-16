@@ -47,7 +47,11 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </div>
 
+  <!-- 🔥 CARICA SUPABASE DA CDN IN MODO STATICO (NON DINAMICO) 🔥 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <script>
+    // 🔥 ORA SUPABASE È DISPONIBILE GLOBALMENTE COME window.supabase 🔥
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -66,9 +70,8 @@ import Layout from '../layouts/Layout.astro';
       loginBtn.textContent = '⏳ Caricamento...';
 
       try {
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
-        
-        const supabase = createClient(
+        // 🔥 SUPABASE È GIÀ CARICATO 🔥
+        const supabase = window.supabase.createClient(
           'https://bpjdjigfworwvyrgwsqh.supabase.co',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29yd3Z5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
         );
