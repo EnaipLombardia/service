@@ -1,6 +1,14 @@
 ---
 import Dashboard from '../components/Dashboard';
 import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+
+// 🔥 PROTEZIONE LOGIN LATO SERVER 🔥
+// Se l'utente non è loggato, viene reindirizzato al login
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) {
+  return Astro.redirect('/login');
+}
 ---
 
 <Layout title="Asset ENAIP">
