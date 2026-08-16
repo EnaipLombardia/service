@@ -208,14 +208,16 @@ export default function Dashboard() {
         />
       )}
 
-      {/* TITOLO - MARRONE IN GIORNO, CHIARO IN NOTTE */}
+      {/* TITOLO */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
         <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowScanner(!showScanner)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              showScanner ? 'bg-[#006a4e] text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              showScanner 
+                ? 'bg-[#006a4e] text-white' 
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             {showScanner ? '📷 Nascondi Scanner' : '📷 Scanner Codici'}
@@ -223,7 +225,9 @@ export default function Dashboard() {
           <button
             onClick={() => setShowOcr(!showOcr)}
             className={`px-3 py-1 rounded text-sm transition-colors ${
-              showOcr ? 'bg-[#8b5a2b] text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              showOcr 
+                ? 'bg-[#8b5a2b] text-white' 
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             {showOcr ? '📷 Nascondi OCR' : '📷 Leggi seriale'}
@@ -234,7 +238,7 @@ export default function Dashboard() {
             className={`px-3 py-1 rounded text-sm transition-colors ${
               notificationsEnabled 
                 ? 'bg-[#006a4e] text-white hover:bg-[#005a3e]' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
             {notificationsEnabled ? '🔔 On' : '🔕 Off'}
@@ -324,7 +328,7 @@ export default function Dashboard() {
                 setSearchTerm('');
                 setSearchResults([]);
               }}
-              className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded transition-colors"
+              className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-white px-4 py-2 rounded transition-colors"
             >
               Cancella
             </button>
@@ -402,7 +406,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* PULSANTI PRINCIPALI */}
+      {/* PULSANTI PRINCIPALI - TUTTI CON SFONDO VISIBILE */}
       <div className="flex flex-wrap gap-2 mb-6">
         <a 
           href="/nuovo-asset"
@@ -447,7 +451,7 @@ export default function Dashboard() {
           🔔 Scadenze
         </a>
         {nextCode && (
-          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-700 dark:text-gray-300">
+          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-800 dark:text-white">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
           </span>
         )}
