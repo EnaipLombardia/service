@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
 ---
 
 <Layout title="Login">
@@ -48,7 +49,9 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <script>
-    // 🔥 LOGIN CON JAVASCRIPT PURO (NESSUN IMPORT) 🔥
+    // 🔥 USA SUPABASE IMPORTATO DA lib/supabaseClient 🔥
+    import { supabase } from '../lib/supabaseClient';
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -67,14 +70,6 @@ import Layout from '../layouts/Layout.astro';
       loginBtn.textContent = '⏳ Caricamento...';
 
       try {
-        // 🔥 CLIENT SUPABASE DA CDN 🔥
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
-        
-        const supabase = createClient(
-          'https://bpjdjigfworwvyrgwsqh.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamRqaWdmd29ydnZ5cmd3c3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMDIxMjEsImV4cCI6MjEwMDg3ODEyMX0.ZKaUnOhz6LZ6X2eVExgvedHek_NSaUWnUht5_KI1Dbk'
-        );
-
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email,
           password: password
