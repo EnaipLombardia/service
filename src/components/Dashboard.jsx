@@ -421,6 +421,12 @@ export default function Dashboard() {
           📋 Censimento Rapido
         </a>
         <a
+  href="/importa-excel"
+  className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
+>
+  📥 Importa Excel
+</a>
+        <a
           href="/statistiche"
           className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
           style={{ backgroundColor: '#006a4e' }}
