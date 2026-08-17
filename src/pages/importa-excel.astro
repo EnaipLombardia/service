@@ -1,0 +1,335 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabaseClient';
+---
+
+<Layout title="Importa Excel">
+  <div class="p-4 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c] mb-4">📥 Importa Asset da Excel</h1>
+    
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">1️⃣ Scarica il template</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-3">
+        Scarica il file Excel di esempio con le colonne corrette.
+      </p>
+      <button 
+        id="scaricaTemplate"
+        class="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded transition-colors"
+      >
+        📄 Scarica Template Excel
+      </button>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">2️⃣ Carica il tuo file Excel</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-3">
+        Seleziona un file Excel (.xlsx o .xls) con i dati degli asset.
+      </p>
+      
+      <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-[#006a4e] transition-colors" id="dropZone">
+        <div class="text-4xl mb-3">📂</div>
+        <p class="text-gray-600 dark:text-gray-400 mb-2">Trascina il tuo file Excel qui</p>
+        <p class="text-sm text-gray-500 dark:text-gray-500">oppure</p>
+        <label class="mt-3 inline-block bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded transition-colors cursor-pointer">
+          Scegli file
+          <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden" />
+        </label>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-3">
+          Formati supportati: .xlsx, .xls
+        </p>
+      </div>
+
+      <div id="fileInfo" class="mt-4 hidden">
+        <div class="bg-green-50 dark:bg-green-900/30 p-3 rounded border border-green-200 dark:border-green-700 flex justify-between items-center">
+          <span class="text-green-700 dark:text-green-400" id="fileName">file.xlsx</span>
+          <span class="text-green-700 dark:text-green-400" id="fileSize">0 KB</span>
+        </div>
+      </div>
+
+      <button 
+        id="importaBtn"
+        class="mt-4 w-full bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled
+      >
+        📤 Importa Asset
+      </button>
+
+      <div id="messaggio" class="mt-4 hidden"></div>
+    </div>
+
+    <!-- Risultati importazione -->
+    <div id="risultati" class="mt-6 hidden">
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📊 Riepilogo Importazione</h2>
+        <div id="riepilogo"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🔥 Libreria XLSX da CDN 🔥
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    document.head.appendChild(script);
+
+    let fileData = null;
+    let fileName = '';
+
+    // --- SCARICA TEMPLATE ---
+    document.getElementById('scaricaTemplate').addEventListener('click', () => {
+      const headers = [
+        'numero_serie', 'tipo_asset', 'marca', 'modello', 'sede', 
+        'stato', 'codice_univoco', 'stanza_ufficio', 'assegnato_a', 
+        'data_acquisto', 'costo_acquisto', 'scadenza_garanzia', 'note'
+      ];
+      
+      const exampleData = [
+        ['ABC123XYZ789', 'Laptop', 'Dell', 'Latitude 5520', 'Milano', 'In Magazzino', '', 'Piano 3', '', '2024-01-15', '1200.00', '2026-01-15', ''],
+        ['DEF456UVW012', 'PCTower', 'HP', 'ProDesk 400', 'Bergamo', 'Assegnato', '', 'Ufficio 5', 'Mario Rossi', '2024-02-20', '850.00', '2026-02-20', ''],
+        ['GHI789XYZ345', 'Monitor', 'Samsung', 'S27E650', 'Milano', 'In Magazzino', '', '', '', '2024-03-10', '250.00', '2026-03-10', 'Monitor 27 pollici'],
+        ['JKL012ABC678', 'Mouse', 'Logitech', 'MX Master 3', 'Milano', 'In Magazzino', '', '', '', '2024-04-01', '89.00', '2026-04-01', ''],
+        ['MNO345DEF901', 'Tastiera', 'Logitech', 'MX Keys', 'Milano', 'In Magazzino', '', '', '', '2024-04-01', '109.00', '2026-04-01', ''],
+        ['PQR678GHI234', 'Cellulare', 'Apple', 'iPhone 14', 'Milano', 'Assegnato', '', 'Ufficio 2', 'Giulia Bianchi', '2024-05-15', '899.00', '2026-05-15', ''],
+        ['STU901JKL567', 'Laptop', 'Lenovo', 'ThinkPad X1', 'Como', 'Assegnato', '', 'Sala riunioni', 'Luca Verdi', '2024-06-01', '1500.00', '2026-06-01', ''],
+        ['VWX234MNO890', 'PCTower', 'Dell', 'OptiPlex 7080', 'Lecco', 'In Magazzino', '', '', '', '2024-07-01', '950.00', '2026-07-01', ''],
+      ];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet([headers, ...exampleData]);
+      XLSX.utils.book_append_sheet(wb, ws, 'Asset');
+      
+      // Scarica
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([wbout], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'template_asset_enaip.xlsx';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // --- DRAG & DROP ---
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-[#006a4e]', 'bg-green-50', 'dark:bg-green-950/20');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-[#006a4e]', 'bg-green-50', 'dark:bg-green-950/20');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-[#006a4e]', 'bg-green-50', 'dark:bg-green-950/20');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      const validTypes = [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel'
+      ];
+      
+      if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+        alert('❌ Formato non supportato. Usa .xlsx o .xls');
+        return;
+      }
+
+      fileName = file.name;
+      fileData = file;
+
+      const fileInfo = document.getElementById('fileInfo');
+      fileInfo.classList.remove('hidden');
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+      
+      document.getElementById('importaBtn').disabled = false;
+      
+      // Leggi e mostra anteprima
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+          
+          if (jsonData.length === 0) {
+            alert('⚠️ Il file è vuoto. Inserisci almeno una riga di dati.');
+            document.getElementById('importaBtn').disabled = true;
+            return;
+          }
+          
+          // Mostra anteprima
+          const preview = document.getElementById('anteprima');
+          if (!preview) {
+            const previewDiv = document.createElement('div');
+            previewDiv.id = 'anteprima';
+            previewDiv.className = 'mt-4 overflow-x-auto';
+            dropZone.parentNode.insertBefore(previewDiv, document.getElementById('importaBtn'));
+          }
+          
+          const previewDiv = document.getElementById('anteprima');
+          let html = '<p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📋 Anteprima (' + jsonData.length + ' righe trovate):</p>';
+          html += '<div class="overflow-x-auto"><table class="w-full text-sm border-collapse">';
+          
+          const headers = Object.keys(jsonData[0]);
+          html += '<thead><tr class="bg-gray-100 dark:bg-gray-700">';
+          headers.forEach(h => {
+            html += `<th class="p-2 border border-gray-300 dark:border-gray-600 text-left">${h}</th>`;
+          });
+          html += '</tr></thead><tbody>';
+          
+          const previewRows = jsonData.slice(0, 5);
+          previewRows.forEach(row => {
+            html += '<tr class="hover:bg-gray-50 dark:hover:bg-gray-700">';
+            headers.forEach(h => {
+              html += `<td class="p-2 border border-gray-300 dark:border-gray-600">${row[h] || ''}</td>`;
+            });
+            html += '</tr>';
+          });
+          
+          if (jsonData.length > 5) {
+            html += `<tr><td colspan="${headers.length}" class="p-2 text-center text-gray-500 dark:text-gray-400">... e altre ${jsonData.length - 5} righe</td></tr>`;
+          }
+          
+          html += '</tbody></table></div>';
+          previewDiv.innerHTML = html;
+          
+        } catch (error) {
+          console.error('Errore lettura file:', error);
+          alert('❌ Errore nella lettura del file: ' + error.message);
+          document.getElementById('importaBtn').disabled = true;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // --- IMPORTA ---
+    document.getElementById('importaBtn').addEventListener('click', async () => {
+      if (!fileData) return;
+
+      const messaggio = document.getElementById('messaggio');
+      const importaBtn = document.getElementById('importaBtn');
+      
+      importaBtn.disabled = true;
+      importaBtn.textContent = '⏳ Importazione in corso...';
+      messaggio.className = 'hidden';
+      
+      try {
+        const data = await fileData.arrayBuffer();
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+        if (jsonData.length === 0) {
+          throw new Error('Il file è vuoto');
+        }
+
+        // Mappa i campi
+        const results = {
+          successi: 0,
+          errori: 0,
+          dettagli: []
+        };
+
+        for (const row of jsonData) {
+          try {
+            // Costruisci l'asset
+            const asset = {
+              numero_serie: row.numero_serie || row.NumeroSerie || row.seriale || '',
+              tipo_asset: row.tipo_asset || row.Tipo || row.tipo || '',
+              marca: row.marca || row.Marca || '',
+              modello: row.modello || row.Modello || '',
+              sede: row.sede || row.Sede || '',
+              stato: row.stato || row.Stato || 'In Magazzino',
+              codice_univoco: row.codice_univoco || row.CodiceUnivoco || row.codice || '',
+              stanza_ufficio: row.stanza_ufficio || row.Stanza || '',
+              assegnato_a: row.assegnato_a || row.AssegnatoA || row.assegnato || '',
+              data_acquisto: row.data_acquisto || row.DataAcquisto || '',
+              costo_acquisto: row.costo_acquisto || row.Costo || '',
+              scadenza_garanzia: row.scadenza_garanzia || row.ScadenzaGaranzia || '',
+              note: row.note || row.Note || ''
+            };
+
+            // Validazione base
+            if (!asset.numero_serie || !asset.tipo_asset || !asset.marca || !asset.modello || !asset.sede) {
+              results.errori++;
+              results.dettagli.push(`❌ Riga ${jsonData.indexOf(row) + 1}: campi obbligatori mancanti (seriale, tipo, marca, modello, sede)`);
+              continue;
+            }
+
+            // Inserisci in Supabase
+            const { data: inserted, error } = await supabase
+              .from('asset')
+              .insert([asset])
+              .select();
+
+            if (error) {
+              results.errori++;
+              results.dettagli.push(`❌ Riga ${jsonData.indexOf(row) + 1}: ${error.message}`);
+              continue;
+            }
+
+            // Se assegnato, crea record in assegnazioni
+            if (asset.assegnato_a && inserted && inserted[0]) {
+              await supabase
+                .from('assegnazioni')
+                .insert([{
+                  asset_id: inserted[0].id,
+                  dipendente_nome: asset.assegnato_a,
+                  dipendente_email: asset.assegnato_a,
+                  data_inizio: new Date().toISOString().split('T')[0],
+                  motivo: 'Assegnazione da import'
+                }]);
+            }
+
+            results.successi++;
+            results.dettagli.push(`✅ Riga ${jsonData.indexOf(row) + 1}: ${asset.marca} ${asset.modello} importato`);
+
+          } catch (rowError) {
+            results.errori++;
+            results.dettagli.push(`❌ Riga ${jsonData.indexOf(row) + 1}: ${rowError.message}`);
+          }
+        }
+
+        // Mostra risultati
+        messaggio.className = 'mt-4 p-3 rounded';
+        if (results.errori === 0) {
+          messaggio.className += ' bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
+          messaggio.innerHTML = `<strong>✅ Importazione completata!</strong><br>${results.successi} asset importati con successo.`;
+        } else {
+          messaggio.className += ' bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
+          messaggio.innerHTML = `<strong>⚠️ Importazione parziale</strong><br>${results.successi} asset importati, ${results.errori} errori.`;
+        }
+
+        // Riepilogo dettagliato
+        const riepilogo = document.getElementById('riepilogo');
+        riepilogo.innerHTML = results.dettagli.map(d => `<div class="text-sm py-1 border-b border-gray-200 dark:border-gray-700">${d}</div>`).join('');
+        document.getElementById('risultati').classList.remove('hidden');
+
+      } catch (error) {
+        console.error('Errore importazione:', error);
+        messaggio.className = 'mt-4 p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded';
+        messaggio.textContent = '❌ Errore durante l\'importazione: ' + error.message;
+        messaggio.classList.remove('hidden');
+      } finally {
+        importaBtn.disabled = false;
+        importaBtn.textContent = '📤 Importa Asset';
+      }
+    });
+  </script>
+</Layout>
