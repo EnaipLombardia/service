@@ -97,9 +97,9 @@ const isHome = Astro.url.pathname === '/';
   
   <body>
     <main>
-      <!-- Header -->
-<div class="bg-[#006a4e] border-b border-[#005a3e] shadow-sm z-40 no-print">
-<div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+      <!-- Header ENAIP - Verde (FISSO IN ALTO, NON STICKY) -->
+      <div class="bg-[#006a4e] border-b border-[#005a3e] shadow-sm z-40 no-print">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
           <div class="flex items-center gap-3">
             {!isHome && (
               <a 
@@ -153,7 +153,7 @@ const isHome = Astro.url.pathname === '/';
         const loginBtn = document.getElementById('login-btn');
         const logoutBtn = document.getElementById('logout-btn');
         
-        // Usa localStorage per verificare la sessione
+        // Verifica se c'è una sessione attiva in localStorage
         const hasSession = localStorage.getItem('supabase.auth.token');
         
         if (hasSession) {
@@ -165,8 +165,22 @@ const isHome = Astro.url.pathname === '/';
         }
       }
 
+      // Esegui al caricamento della pagina
       document.addEventListener('DOMContentLoaded', updateAuthButtons);
-      window.addEventListener('pageshow', updateAuthButtons);
+      
+      // Riesegui ogni volta che la pagina viene mostrata (dopo il login/logout)
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          updateAuthButtons();
+        }
+      });
+
+      // Ascolta i cambiamenti nel localStorage (per altri tab)
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'supabase.auth.token') {
+          updateAuthButtons();
+        }
+      });
 
       // Toggle tema
       const toggle = document.getElementById('themeToggle');
