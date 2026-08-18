@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getAssetStats, getRecentAssets, getNextAvailableCode } from '../lib/assetFunctions';
 import Scanner from './Scanner';
@@ -31,6 +31,8 @@ export default function Dashboard() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [suggestions, setSuggestions] = useState([]);
+  const searchInputRef = useRef(null);
 
   // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
@@ -70,6 +72,32 @@ export default function Dashboard() {
       setLoading(false);
     }
   }
+
+  // 🔥 RICERCA CON SUGGERIMENTI (Typeahead) 🔥
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchTerm.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('asset')
+          .select('id, numero_serie, marca, modello, tipo_asset, stato')
+          .or(`numero_serie.ilike.%${searchTerm}%, marca.ilike.%${searchTerm}%, modello.ilike.%${searchTerm}%`)
+          .limit(5);
+        
+        if (error) throw error;
+        setSuggestions(data || []);
+      } catch (error) {
+        console.error('Errore suggerimenti:', error);
+        setSuggestions([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   async function handleScan(code) {
     setScannedCode(code);
@@ -176,11 +204,20 @@ export default function Dashboard() {
       setToast({ message: '❌ Errore durante la ricerca', type: 'error' });
     } finally {
       setIsSearching(false);
+      setSuggestions([]);
     }
   }
 
   const enaipGreen = '#006a4e';
   const enaipBrown = '#8b5a2b';
+
+  // 🕐 SALUTO DINAMICO
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return '🌅 Buongiorno';
+    if (hour < 18) return '☀️ Buon pomeriggio';
+    return '🌙 Buonasera';
+  };
 
   if (authLoading) {
     return (
@@ -207,12 +244,15 @@ export default function Dashboard() {
         />
       )}
 
-      {/* HEADER CON BENVENUTO */}
-      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+      {/* HEADER CON BENVENUTO DINAMICO */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 animate-fade-in-down">
         <div>
           <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Benvenuto, <span className="font-medium text-gray-700 dark:text-gray-300">{user?.email || 'Admin'}</span> 
+            {getGreeting()}, <span className="font-medium text-gray-700 dark:text-gray-300">{user?.email?.split('@')[0] || 'Admin'}</span>
+            <span className="text-gray-400 dark:text-gray-500 ml-2 text-xs">
+              ({new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })})
+            </span>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -252,7 +292,7 @@ export default function Dashboard() {
 
       {/* SCANNER (toggle) */}
       {showScanner && (
-        <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+        <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 animate-fade-in-up">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">🔍 Scansiona un asset</h2>
           <Scanner onDetected={handleScan} />
           {scannedCode && !scannedAsset && (
@@ -276,7 +316,7 @@ export default function Dashboard() {
 
       {/* OCR (modal) */}
       {showOcr && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in-up">
           <div className="max-w-md w-full">
             <OcrScanner 
               onDetected={handleOcrDetected}
@@ -294,21 +334,59 @@ export default function Dashboard() {
       )}
 
       {ocrResult && (
-        <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-lg">
+        <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-lg animate-fade-in-up">
           <p className="text-purple-700 dark:text-purple-400">📝 Testo riconosciuto: <strong>{ocrResult}</strong></p>
         </div>
       )}
 
-      {/* RICERCA PRINCIPALE */}
-      <div className="mb-6">
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="🔍 Cerca per seriale, marca, modello, tipo o codice..."
-            className="flex-1 border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-all"
-          />
+      {/* RICERCA CON SUGGERIMENTI (Typeahead) */}
+      <div className="mb-6 animate-fade-in-up animation-delay-100">
+        <form onSubmit={handleSearch} className="relative flex gap-2">
+          <div className="relative flex-1">
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="🔍 Cerca per seriale, marca, modello, tipo o codice..."
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-all"
+            />
+            {suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-20 overflow-hidden">
+                {suggestions.map((asset) => (
+                  <div
+                    key={asset.id}
+                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors flex justify-between items-center"
+                    onClick={() => {
+                      setSearchTerm(asset.numero_serie || asset.marca || '');
+                      setSuggestions([]);
+                      goToAssetDetail(asset.id);
+                    }}
+                  >
+                    <div>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {asset.numero_serie || asset.codice_univoco || 'N/A'}
+                      </span>
+                      <span className="text-gray-600 dark:text-gray-400 ml-2">
+                        {asset.marca} {asset.modello}
+                      </span>
+                      <span className="text-gray-500 dark:text-gray-400 ml-2 text-sm">
+                        ({asset.tipo_asset})
+                      </span>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      asset.stato === 'Assegnato' ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300' :
+                      asset.stato === 'In Magazzino' ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300' :
+                      asset.stato === 'In Manutenzione' ? 'bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300' :
+                      'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
+                    }`}>
+                      {asset.stato}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <button 
             type="submit"
             className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-6 py-3 rounded-xl font-medium transition-all"
@@ -321,6 +399,8 @@ export default function Dashboard() {
               onClick={() => {
                 setSearchTerm('');
                 setSearchResults([]);
+                setSuggestions([]);
+                searchInputRef.current?.focus();
               }}
               className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-xl transition-all"
             >
@@ -330,7 +410,7 @@ export default function Dashboard() {
         </form>
 
         {searchResults.length > 0 && (
-          <div className="mt-3 bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+          <div className="mt-3 bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 animate-fade-in-up">
             <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
               Risultati della ricerca ({searchResults.length})
             </h3>
@@ -366,9 +446,9 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* STATISTICHE - 5 CARD CON ICONE E COLORI */}
+      {/* STATISTICHE - 5 CARD CON ANIMAZIONI */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-800 dark:to-blue-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-800 dark:to-blue-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-100">
           <div className="flex items-center gap-3">
             <span className="text-2xl">📊</span>
             <div>
@@ -377,7 +457,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-800 dark:to-green-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+        <div className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-800 dark:to-green-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-200">
           <div className="flex items-center gap-3">
             <span className="text-2xl">👤</span>
             <div>
@@ -386,7 +466,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 dark:from-yellow-800 dark:to-yellow-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+        <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 dark:from-yellow-800 dark:to-yellow-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-300">
           <div className="flex items-center gap-3">
             <span className="text-2xl">📦</span>
             <div>
@@ -395,7 +475,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-800 dark:to-orange-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-800 dark:to-orange-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-400">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🔧</span>
             <div>
@@ -404,7 +484,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-red-500 to-red-600 dark:from-red-800 dark:to-red-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+        <div className="bg-gradient-to-br from-red-500 to-red-600 dark:from-red-800 dark:to-red-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-500">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🗑️</span>
             <div>
@@ -415,8 +495,28 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* PULSANTI AZIONE - CON COLORI ENAIP */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      {/* 📊 BARRA DI AVANZAMENTO ASSET ASSEGNATI */}
+      <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 animate-fade-in-up animation-delay-300">
+        <div className="flex justify-between text-sm mb-1">
+          <span className="text-gray-700 dark:text-gray-300">📊 Asset assegnati</span>
+          <span className="text-gray-700 dark:text-gray-300">
+            {stats.totale > 0 ? Math.round((stats.assegnati / stats.totale) * 100) : 0}%
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+          <div 
+            className="bg-[#006a4e] h-3 rounded-full transition-all duration-1000"
+            style={{ width: `${stats.totale > 0 ? (stats.assegnati / stats.totale) * 100 : 0}%` }}
+          ></div>
+        </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          {stats.assegnati} su {stats.totale} asset attualmente assegnati
+          {stats.totale === 0 && " (nessun asset censito)"}
+        </p>
+      </div>
+
+      {/* PULSANTI AZIONE - CON SFONDI SEMPRE VISIBILI */}
+      <div className="flex flex-wrap gap-2 mb-6 animate-fade-in-up animation-delay-400">
         <a href="/nuovo-asset" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">➕ Nuovo Asset</a>
         <a href="/censimento" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📋 Censimento Rapido</a>
         <a href="/statistiche" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📊 Statistiche</a>
@@ -433,7 +533,7 @@ export default function Dashboard() {
       </div>
 
       {/* ULTIMI ASSET INSERITI */}
-      <div>
+      <div className="animate-fade-in-up animation-delay-500">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">
