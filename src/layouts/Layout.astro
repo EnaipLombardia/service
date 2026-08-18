@@ -60,12 +60,39 @@ const isHome = Astro.url.pathname === '/';
       .dark .hover\:bg-gray-50:hover { background-color: #334155; }
       .dark .hover\:bg-gray-100:hover { background-color: #334155; }
       .dark .hover\:bg-gray-200:hover { background-color: #475569; }
+      
+      /* 🔥 ANIMAZIONI DI INGRESSO 🔥 */
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
+      .animate-fade-in-down { animation: fadeInDown 0.4s ease-out forwards; }
+      .animate-slide-in-left { animation: slideInLeft 0.5s ease-out forwards; }
+      .animate-scale-in { animation: scaleIn 0.4s ease-out forwards; }
+      
+      .animation-delay-100 { animation-delay: 0.1s; }
+      .animation-delay-200 { animation-delay: 0.2s; }
+      .animation-delay-300 { animation-delay: 0.3s; }
+      .animation-delay-400 { animation-delay: 0.4s; }
+      
       @keyframes bounceIn { 0% { transform: translateY(100px) scale(0.9); opacity: 0; } 60% { transform: translateY(-10px) scale(1.02); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
       .animate-bounce-in { animation: bounceIn 0.5s ease-out; }
       @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
       .animate-pulse-slow { animation: pulse 1.5s ease-in-out infinite; }
-      @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
+      
       ::-webkit-scrollbar { width: 8px; height: 8px; }
       ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
       .dark ::-webkit-scrollbar-track { background: #1e293b; }
@@ -97,9 +124,9 @@ const isHome = Astro.url.pathname === '/';
   
   <body>
     <main>
-      <!-- Header ENAIP - Verde (FISSO IN ALTO, NON STICKY) -->
+      <!-- Header ENAIP - Verde -->
       <div class="bg-[#006a4e] border-b border-[#005a3e] shadow-sm z-40 no-print">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-2">
           <div class="flex items-center gap-3">
             {!isHome && (
               <a 
@@ -121,18 +148,15 @@ const isHome = Astro.url.pathname === '/';
               <a
                 href="/login"
                 id="login-btn"
-               className="text-black rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#8b5a2b' }}
+                class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
               >
                 🔑 Accedi
               </a>
-             
               <a
-          href="/logout"
-          id="logout-btn"
-          className="text-black rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#8b5a2b' }}
-        >
+                href="/logout"
+                id="logout-btn"
+                class="bg-red-500/20 hover:bg-red-500/30 text-white px-3 py-1.5 rounded-lg text-sm transition-colors hidden"
+              >
                 🚪 Logout
               </a>
             </div>
@@ -151,12 +175,10 @@ const isHome = Astro.url.pathname === '/';
     </main>
 
     <script>
-      // 🔥 GESTIONE PULSANTI LOGIN/LOGOUT 🔥
+      // GESTIONE PULSANTI LOGIN/LOGOUT
       function updateAuthButtons() {
         const loginBtn = document.getElementById('login-btn');
         const logoutBtn = document.getElementById('logout-btn');
-        
-        // Verifica se c'è una sessione attiva in localStorage
         const hasSession = localStorage.getItem('supabase.auth.token');
         
         if (hasSession) {
@@ -168,21 +190,12 @@ const isHome = Astro.url.pathname === '/';
         }
       }
 
-      // Esegui al caricamento della pagina
       document.addEventListener('DOMContentLoaded', updateAuthButtons);
-      
-      // Riesegui ogni volta che la pagina viene mostrata (dopo il login/logout)
       window.addEventListener('pageshow', (event) => {
-        if (event.persisted) {
-          updateAuthButtons();
-        }
+        if (event.persisted) updateAuthButtons();
       });
-
-      // Ascolta i cambiamenti nel localStorage (per altri tab)
       window.addEventListener('storage', (e) => {
-        if (e.key === 'supabase.auth.token') {
-          updateAuthButtons();
-        }
+        if (e.key === 'supabase.auth.token') updateAuthButtons();
       });
 
       // Toggle tema
