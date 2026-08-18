@@ -186,7 +186,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
+          <div className="text-4xl mb-4 animate-pulse">⏳</div>
           <p className="text-gray-600 dark:text-gray-400">Verifica accesso in corso...</p>
         </div>
       </div>
@@ -198,7 +198,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto">
       {toast && (
         <Toast 
           message={toast.message} 
@@ -207,80 +207,76 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
-        <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
+      {/* HEADER CON BENVENUTO */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Benvenuto, <span className="font-medium text-gray-700 dark:text-gray-300">{user?.email || 'Admin'}</span> 
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowScanner(!showScanner)}
-            className={`px-3 py-1 rounded text-sm transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
               showScanner 
-                ? 'text-white' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
+                ? 'bg-[#006a4e] text-white' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
-            style={showScanner ? { backgroundColor: enaipGreen } : {}}
           >
             {showScanner ? '📷 Nascondi Scanner' : '📷 Scanner Codici'}
           </button>
           <button
             onClick={() => setShowOcr(!showOcr)}
-            className={`px-3 py-1 rounded text-sm transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
               showOcr 
-                ? 'text-white' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
+                ? 'bg-[#8b5a2b] text-white' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
-            style={showOcr ? { backgroundColor: enaipBrown } : {}}
           >
             {showOcr ? '📷 Nascondi OCR' : '📷 Leggi seriale'}
           </button>
           <ExportButton />
           <button
             onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-            className={`px-3 py-1 rounded text-sm transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
               notificationsEnabled 
-                ? 'text-white hover:opacity-80' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600'
+                ? 'bg-[#006a4e] text-white hover:bg-[#005a3e]' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
-            style={notificationsEnabled ? { backgroundColor: enaipGreen } : {}}
           >
             {notificationsEnabled ? '🔔 On' : '🔕 Off'}
           </button>
         </div>
       </div>
-      
+
+      {/* SCANNER (toggle) */}
       {showScanner && (
-        <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">🔍 Scansiona un asset</h2>
           <Scanner onDetected={handleScan} />
-          
           {scannedCode && !scannedAsset && (
-            <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded">
-              <p className="text-yellow-700 dark:text-yellow-400">
-                ⏳ Codice "{scannedCode}" rilevato. Cerco in database...
-              </p>
+            <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+              <p className="text-yellow-700 dark:text-yellow-400">⏳ Codice "{scannedCode}" rilevato. Cerco in database...</p>
             </div>
           )}
-          
           {scannedAsset && (
-            <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded">
-              <p className="text-green-700 dark:text-green-400">
-                ✅ Asset trovato: <strong>{scannedAsset.marca} {scannedAsset.modello}</strong>
-                <br />
-                <span className="text-sm">Seriale: {scannedAsset.numero_serie}</span>
-                <button 
-                  className="ml-3 text-white px-3 py-1 rounded text-sm transition-colors hover:opacity-80"
-                  style={{ backgroundColor: enaipGreen }}
-                  onClick={() => goToAssetDetail(scannedAsset.id)}
-                >
-                  Vedi dettaglio
-                </button>
-              </p>
+            <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
+              <p className="text-green-700 dark:text-green-400">✅ Asset trovato: <strong>{scannedAsset.marca} {scannedAsset.modello}</strong></p>
+              <button 
+                className="mt-2 bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-1.5 rounded-lg text-sm transition-all"
+                onClick={() => goToAssetDetail(scannedAsset.id)}
+              >
+                Vedi dettaglio →
+              </button>
             </div>
           )}
         </div>
       )}
 
+      {/* OCR (modal) */}
       {showOcr && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="max-w-md w-full">
             <OcrScanner 
               onDetected={handleOcrDetected}
@@ -298,26 +294,24 @@ export default function Dashboard() {
       )}
 
       {ocrResult && (
-        <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded">
-          <p className="text-purple-700 dark:text-purple-400">
-            📝 Testo riconosciuto: <strong>{ocrResult}</strong>
-          </p>
+        <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-lg">
+          <p className="text-purple-700 dark:text-purple-400">📝 Testo riconosciuto: <strong>{ocrResult}</strong></p>
         </div>
       )}
 
-      <div className="mb-4 relative">
+      {/* RICERCA PRINCIPALE */}
+      <div className="mb-6">
         <form onSubmit={handleSearch} className="flex gap-2">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="🔍 Cerca per seriale, marca, modello, tipo o codice..."
-            className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-colors"
+            className="flex-1 border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#006a4e] transition-all"
           />
           <button 
             type="submit"
-            className="text-white px-4 py-2 rounded transition-colors hover:opacity-80"
-            style={{ backgroundColor: enaipGreen }}
+            className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-6 py-3 rounded-xl font-medium transition-all"
           >
             Cerca
           </button>
@@ -328,15 +322,15 @@ export default function Dashboard() {
                 setSearchTerm('');
                 setSearchResults([]);
               }}
-              className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-white px-4 py-2 rounded transition-colors"
+              className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-3 rounded-xl transition-all"
             >
-              Cancella
+              ✕
             </button>
           )}
         </form>
 
         {searchResults.length > 0 && (
-          <div className="mt-3 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+          <div className="mt-3 bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
             <h3 className="p-3 font-semibold border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
               Risultati della ricerca ({searchResults.length})
             </h3>
@@ -351,13 +345,13 @@ export default function Dashboard() {
                     <div>
                       <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
                       <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
-                      <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
+                      <span className="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.tipo_asset})</span>
                     </div>
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      asset.stato === 'Assegnato' ? 'bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-300' :
-                      asset.stato === 'In Magazzino' ? 'bg-yellow-200 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' :
-                      asset.stato === 'In Manutenzione' ? 'bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300' :
-                      'bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-300'
+                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                      asset.stato === 'Assegnato' ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300' :
+                      asset.stato === 'In Magazzino' ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300' :
+                      asset.stato === 'In Manutenzione' ? 'bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300' :
+                      'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
                     }`}>
                       {asset.stato}
                     </span>
@@ -372,111 +366,82 @@ export default function Dashboard() {
         )}
       </div>
 
+      {/* STATISTICHE - 5 CARD CON ICONE E COLORI */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
-          <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-            <AnimatedCounter value={stats.totale} />
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-800 dark:to-blue-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📊</span>
+            <div>
+              <div className="text-2xl font-bold"><AnimatedCounter value={stats.totale} /></div>
+              <div className="text-sm opacity-90">Totale</div>
+            </div>
           </div>
-          <div className="text-sm text-blue-600 dark:text-blue-400">Totale</div>
         </div>
-        <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
-          <div className="text-2xl font-bold text-green-700 dark:text-green-300">
-            <AnimatedCounter value={stats.assegnati} />
+        <div className="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-800 dark:to-green-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">👤</span>
+            <div>
+              <div className="text-2xl font-bold"><AnimatedCounter value={stats.assegnati} /></div>
+              <div className="text-sm opacity-90">Assegnati</div>
+            </div>
           </div>
-          <div className="text-sm text-green-600 dark:text-green-400">Assegnati</div>
         </div>
-        <div className="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
-          <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
-            <AnimatedCounter value={stats.magazzino} />
+        <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 dark:from-yellow-800 dark:to-yellow-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📦</span>
+            <div>
+              <div className="text-2xl font-bold"><AnimatedCounter value={stats.magazzino} /></div>
+              <div className="text-sm opacity-90">In Magazzino</div>
+            </div>
           </div>
-          <div className="text-sm text-yellow-600 dark:text-yellow-400">In Magazzino</div>
         </div>
-        <div className="bg-orange-100 dark:bg-orange-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
-          <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
-            <AnimatedCounter value={stats.manutenzione} />
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-800 dark:to-orange-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🔧</span>
+            <div>
+              <div className="text-2xl font-bold"><AnimatedCounter value={stats.manutenzione} /></div>
+              <div className="text-sm opacity-90">In Manutenzione</div>
+            </div>
           </div>
-          <div className="text-sm text-orange-600 dark:text-orange-400">In Manutenzione</div>
         </div>
-        <div className="bg-red-100 dark:bg-red-900/30 p-4 rounded-lg text-center hover:shadow-md transition-shadow">
-          <div className="text-2xl font-bold text-red-700 dark:text-red-300">
-            <AnimatedCounter value={stats.dismessi} />
+        <div className="bg-gradient-to-br from-red-500 to-red-600 dark:from-red-800 dark:to-red-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02]">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🗑️</span>
+            <div>
+              <div className="text-2xl font-bold"><AnimatedCounter value={stats.dismessi} /></div>
+              <div className="text-sm opacity-90">Dismessi</div>
+            </div>
           </div>
-          <div className="text-sm text-red-600 dark:text-red-400">Dismessi</div>
         </div>
       </div>
 
+      {/* PULSANTI AZIONE - CON COLORI ENAIP */}
       <div className="flex flex-wrap gap-2 mb-6">
-        <a 
-          href="/nuovo-asset"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#006a4e' }}
-        >
-          ➕ Nuovo Asset
-        </a>
-        <a
-          href="/censimento"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#8b5a2b' }}
-        >
-          📋 Censimento Rapido
-        </a>
-        <a
-  href="/importa-excel"
-  className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2 rounded inline-block transition-colors"
->
-  📥 Importa Excel
-</a>
-        <a
-          href="/statistiche"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#006a4e' }}
-        >
-          📊 Statistiche
-        </a>
-        <a
-          href="/storico"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#8b5a2b' }}
-        >
-          📜 Storico Generale
-        </a>
-        <a
-          href="/admin"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#006a4e' }}
-        >
-          📊 Admin
-        </a>
-        <a
-          href="/audit"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#8b5a2b' }}
-        >
-          📜 Audit
-        </a>
-        <a
-          href="/scadenze"
-          className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-          style={{ backgroundColor: '#006a4e' }}
-        >
-          🔔 Scadenze
-        </a>
+        <a href="/nuovo-asset" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">➕ Nuovo Asset</a>
+        <a href="/censimento" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📋 Censimento Rapido</a>
+        <a href="/statistiche" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📊 Statistiche</a>
+        <a href="/storico" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📜 Storico</a>
+        <a href="/admin" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📊 Admin</a>
+        <a href="/audit" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📜 Audit</a>
+        <a href="/scadenze" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">🔔 Scadenze</a>
+        <a href="/importa-excel" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📥 Importa Excel</a>
         {nextCode && (
-          <span className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded text-sm flex items-center text-gray-800 dark:text-white">
+          <span className="bg-gray-100 dark:bg-gray-700 px-4 py-2.5 rounded-xl text-sm flex items-center text-gray-700 dark:text-gray-300">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
           </span>
         )}
       </div>
 
+      {/* ULTIMI ASSET INSERITI */}
       <div>
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">📋 Ultimi asset inseriti</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {recentAssets.length > 0 && `Mostrando ${recentAssets.length} asset`}
           </span>
         </div>
         {loading ? (
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+          <div className="bg-white dark:bg-gray-800 shadow rounded-xl divide-y divide-gray-200 dark:divide-gray-700">
             <SkeletonCard />
             <SkeletonCard />
             <SkeletonCard />
@@ -484,55 +449,46 @@ export default function Dashboard() {
             <SkeletonCard />
           </div>
         ) : recentAssets.length === 0 ? (
-          <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-xl">
             <p className="text-gray-500 dark:text-gray-400">📭 Nessun asset inserito. Inizia a censire!</p>
-            <a 
-              href="/nuovo-asset" 
-              className="text-white px-4 py-2 rounded inline-block transition-colors hover:opacity-80"
-              style={{ backgroundColor: '#006a4e' }}
-            >
-              ➕ Inserisci il primo asset
-            </a>
+            <a href="/nuovo-asset" className="mt-3 inline-block bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2 rounded-xl transition-all">➕ Inserisci il primo asset</a>
           </div>
         ) : (
-          <ul className="bg-white dark:bg-gray-800 shadow rounded-lg divide-y divide-gray-200 dark:divide-gray-700">
+          <div className="bg-white dark:bg-gray-800 shadow rounded-xl divide-y divide-gray-200 dark:divide-gray-700 overflow-hidden">
             {recentAssets.map(asset => (
-              <li 
+              <div 
                 key={asset.id} 
-                className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
                 onClick={() => goToAssetDetail(asset.id)}
               >
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <div>
-                    <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
-                    <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
-                    <span className="text-gray-500 dark:text-gray-500 ml-2 text-sm">({asset.tipo_asset})</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      asset.stato === 'Assegnato' ? 'bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-300' :
-                      asset.stato === 'In Magazzino' ? 'bg-yellow-200 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300' :
-                      asset.stato === 'In Manutenzione' ? 'bg-orange-200 dark:bg-orange-900/50 text-orange-800 dark:text-orange-300' :
-                      'bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-300'
-                    }`}>
-                      {asset.stato}
-                    </span>
-                    <span className="text-gray-400 dark:text-gray-500 text-sm">
-                      {new Date(asset.created_at).toLocaleDateString('it-IT')}
-                    </span>
-                  </div>
+                <div>
+                  <span className="font-semibold text-gray-900 dark:text-white">{asset.numero_serie || asset.codice_univoco || 'N/A'}</span>
+                  <span className="text-gray-600 dark:text-gray-400 ml-2">- {asset.marca} {asset.modello}</span>
+                  <span className="text-gray-500 dark:text-gray-400 ml-2 text-sm">({asset.tipo_asset})</span>
                 </div>
-              </li>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                    asset.stato === 'Assegnato' ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300' :
+                    asset.stato === 'In Magazzino' ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300' :
+                    asset.stato === 'In Manutenzione' ? 'bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300' :
+                    'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300'
+                  }`}>
+                    {asset.stato}
+                  </span>
+                  <span className="text-gray-400 dark:text-gray-500 text-xs">
+                    {new Date(asset.created_at).toLocaleDateString('it-IT')}
+                  </span>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
 
+      {/* FOOTER */}
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400 dark:text-gray-500">
         <p className="text-[#8b5a2b] dark:text-[#c49a6c] font-medium">ENAIP Lombardia - Sistema di Gestione Asset v1.0</p>
-        <p className="text-xs mt-1">
-          {notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}
-        </p>
+        <p className="text-xs mt-1">{notificationsEnabled ? '🔔 Notifiche attive' : '🔕 Notifiche disattivate'}</p>
       </div>
     </div>
   );
