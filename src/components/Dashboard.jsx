@@ -236,7 +236,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
-      {/* TOAST DI BENVENUTO */}
+      {/* TOAST DI BENVENUTO - CON SFONDO E TESTO LEGGIBILE */}
       {showWelcome && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-[#006a4e] text-white px-6 py-3 rounded-xl shadow-lg animate-bounce-in">
           👋 {getGreeting()}, {user?.email?.split('@')[0] || 'Admin'}! Benvenuto su Asset ENAIP.
@@ -251,10 +251,10 @@ export default function Dashboard() {
         />
       )}
 
-      {/* HEADER */}
+      {/* HEADER CON TITOLO MODIFICATO PER TEST */}
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 animate-fade-in-down">
         <div>
-          <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
+          <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP - VERSIONE 2.0</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
             {getGreeting()}, <span className="font-medium text-gray-700 dark:text-gray-300">{user?.email?.split('@')[0] || 'Admin'}</span>
             <span className="text-gray-400 dark:text-gray-500 ml-2 text-xs">
@@ -502,53 +502,61 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 🔥 PULSANTI AZIONE - CON SFONDO SEMPRE VISIBILE 🔥 */}
+      {/* 🔥 PULSANTI CON SFONDO - VERSIONE CON STILE INLINE FORZATO 🔥 */}
       <div className="flex flex-wrap gap-2 mb-6 animate-fade-in-up animation-delay-300">
         <a 
           href="/nuovo-asset" 
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#006a4e', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           ➕ Nuovo Asset
         </a>
         <a 
           href="/censimento" 
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#8b5a2b', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           📋 Censimento Rapido
         </a>
         <a 
           href="/statistiche" 
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#006a4e', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           📊 Statistiche
         </a>
         <a 
           href="/storico" 
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#8b5a2b', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           📜 Storico
         </a>
         <a 
           href="/admin" 
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#006a4e', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           📊 Admin
         </a>
         <a 
           href="/audit" 
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#8b5a2b', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           📜 Audit
         </a>
         <a 
           href="/scadenze" 
-          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#006a4e', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           🔔 Scadenze
         </a>
         <a 
           href="/importa-excel" 
-          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+          style={{ backgroundColor: '#8b5a2b', color: 'white' }}
+          className="hover:opacity-80 px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
         >
           📥 Importa Excel
         </a>
