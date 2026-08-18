@@ -33,6 +33,7 @@ export default function Dashboard() {
   const [authLoading, setAuthLoading] = useState(true);
   const [suggestions, setSuggestions] = useState([]);
   const searchInputRef = useRef(null);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
@@ -46,6 +47,9 @@ export default function Dashboard() {
         setUser(data.user);
         setAuthLoading(false);
         loadDashboardData();
+        // Mostra toast di benvenuto
+        setShowWelcome(true);
+        setTimeout(() => setShowWelcome(false), 4000);
       } catch (err) {
         console.error('❌ Errore verifica login:', err);
         window.location.href = '/login';
@@ -236,6 +240,13 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
+      {/* TOAST DI BENVENUTO */}
+      {showWelcome && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-[#006a4e] text-white px-6 py-3 rounded-xl shadow-lg animate-bounce-in">
+          👋 {getGreeting()}, {user?.email?.split('@')[0] || 'Admin'}! Benvenuto su Asset ENAIP.
+        </div>
+      )}
+
       {toast && (
         <Toast 
           message={toast.message} 
@@ -446,7 +457,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* STATISTICHE - 5 CARD CON ANIMAZIONI */}
+      {/* STATISTICHE - 5 CARD */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-800 dark:to-blue-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-100">
           <div className="flex items-center gap-3">
@@ -495,36 +506,32 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 📊 BARRA DI AVANZAMENTO ASSET ASSEGNATI */}
-      <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 animate-fade-in-up animation-delay-300">
-        <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-700 dark:text-gray-300">📊 Asset assegnati</span>
-          <span className="text-gray-700 dark:text-gray-300">
-            {stats.totale > 0 ? Math.round((stats.assegnati / stats.totale) * 100) : 0}%
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-          <div 
-            className="bg-[#006a4e] h-3 rounded-full transition-all duration-1000"
-            style={{ width: `${stats.totale > 0 ? (stats.assegnati / stats.totale) * 100 : 0}%` }}
-          ></div>
-        </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          {stats.assegnati} su {stats.totale} asset attualmente assegnati
-          {stats.totale === 0 && " (nessun asset censito)"}
-        </p>
-      </div>
-
-      {/* PULSANTI AZIONE - CON SFONDI SEMPRE VISIBILI */}
-      <div className="flex flex-wrap gap-2 mb-6 animate-fade-in-up animation-delay-400">
-        <a href="/nuovo-asset" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">➕ Nuovo Asset</a>
-        <a href="/censimento" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📋 Censimento Rapido</a>
-        <a href="/statistiche" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📊 Statistiche</a>
-        <a href="/storico" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📜 Storico</a>
-        <a href="/admin" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📊 Admin</a>
-        <a href="/audit" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📜 Audit</a>
-        <a href="/scadenze" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">🔔 Scadenze</a>
-        <a href="/importa-excel" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">📥 Importa Excel</a>
+      {/* 🔥 PULSANTI AZIONE - CON SFONDI SEMPRE VISIBILI 🔥 */}
+      <div className="flex flex-wrap gap-2 mb-6 animate-fade-in-up animation-delay-300">
+        <a href="/nuovo-asset" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          ➕ Nuovo Asset
+        </a>
+        <a href="/censimento" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          📋 Censimento Rapido
+        </a>
+        <a href="/statistiche" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          📊 Statistiche
+        </a>
+        <a href="/storico" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          📜 Storico
+        </a>
+        <a href="/admin" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          📊 Admin
+        </a>
+        <a href="/audit" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          📜 Audit
+        </a>
+        <a href="/scadenze" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          🔔 Scadenze
+        </a>
+        <a href="/importa-excel" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+          📥 Importa Excel
+        </a>
         {nextCode && (
           <span className="bg-gray-100 dark:bg-gray-700 px-4 py-2.5 rounded-xl text-sm flex items-center text-gray-700 dark:text-gray-300">
             🔖 Prossimo codice: <strong className="ml-1">{nextCode}</strong>
