@@ -35,7 +35,6 @@ export default function Dashboard() {
   const searchInputRef = useRef(null);
   const [showWelcome, setShowWelcome] = useState(false);
 
-  // 🔥 PROTEZIONE LOGIN LATO CLIENT 🔥
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -47,7 +46,6 @@ export default function Dashboard() {
         setUser(data.user);
         setAuthLoading(false);
         loadDashboardData();
-        // Mostra toast di benvenuto
         setShowWelcome(true);
         setTimeout(() => setShowWelcome(false), 4000);
       } catch (err) {
@@ -77,7 +75,6 @@ export default function Dashboard() {
     }
   }
 
-  // 🔥 RICERCA CON SUGGERIMENTI (Typeahead) 🔥
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchTerm.length < 2) {
@@ -215,7 +212,6 @@ export default function Dashboard() {
   const enaipGreen = '#006a4e';
   const enaipBrown = '#8b5a2b';
 
-  // 🕐 SALUTO DINAMICO
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return '🌅 Buongiorno';
@@ -255,7 +251,7 @@ export default function Dashboard() {
         />
       )}
 
-      {/* HEADER CON BENVENUTO DINAMICO */}
+      {/* HEADER */}
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 animate-fade-in-down">
         <div>
           <h1 className="text-2xl font-bold text-[#8b5a2b] dark:text-[#c49a6c]">📦 Asset ENAIP Lombardia</h1>
@@ -301,7 +297,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* SCANNER (toggle) */}
+      {/* SCANNER */}
       {showScanner && (
         <div className="mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 animate-fade-in-up">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">🔍 Scansiona un asset</h2>
@@ -325,7 +321,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* OCR (modal) */}
+      {/* OCR */}
       {showOcr && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in-up">
           <div className="max-w-md w-full">
@@ -350,7 +346,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* RICERCA CON SUGGERIMENTI (Typeahead) */}
+      {/* RICERCA */}
       <div className="mb-6 animate-fade-in-up animation-delay-100">
         <form onSubmit={handleSearch} className="relative flex gap-2">
           <div className="relative flex-1">
@@ -457,7 +453,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* STATISTICHE - 5 CARD */}
+      {/* STATISTICHE */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-800 dark:to-blue-900 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-all hover:scale-[1.02] animate-fade-in-up animation-delay-100">
           <div className="flex items-center gap-3">
@@ -506,30 +502,54 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 🔥 PULSANTI AZIONE - CON SFONDI SEMPRE VISIBILI 🔥 */}
+      {/* 🔥 PULSANTI AZIONE - CON SFONDO SEMPRE VISIBILE 🔥 */}
       <div className="flex flex-wrap gap-2 mb-6 animate-fade-in-up animation-delay-300">
-        <a href="/nuovo-asset" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/nuovo-asset" 
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           ➕ Nuovo Asset
         </a>
-        <a href="/censimento" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/censimento" 
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           📋 Censimento Rapido
         </a>
-        <a href="/statistiche" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/statistiche" 
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           📊 Statistiche
         </a>
-        <a href="/storico" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/storico" 
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           📜 Storico
         </a>
-        <a href="/admin" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/admin" 
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           📊 Admin
         </a>
-        <a href="/audit" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/audit" 
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           📜 Audit
         </a>
-        <a href="/scadenze" className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/scadenze" 
+          className="bg-[#006a4e] hover:bg-[#005a3e] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           🔔 Scadenze
         </a>
-        <a href="/importa-excel" className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+        <a 
+          href="/importa-excel" 
+          className="bg-[#8b5a2b] hover:bg-[#7a4a1b] text-white px-4 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+        >
           📥 Importa Excel
         </a>
         {nextCode && (
